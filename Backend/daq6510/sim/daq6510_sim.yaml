@@ -1,0 +1,15 @@
+spec: "1.1"
+
+devices:
+  daq6510-sim:
+    eom:
+      USB INSTR:
+        q: "\n"
+        r: "\n"
+    dialogues:
+      - q: "*IDN?"
+        r: "KEITHLEY INSTRUMENTS,MODEL DAQ6510,12345678,1.0.0"
+
+resources:
+  USB::0x05E6::0x6510::12345678::INSTR:
+    device: daq6510-sim

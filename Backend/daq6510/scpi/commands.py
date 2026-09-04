@@ -1,5 +1,8 @@
 from typing import Literal
 
+from daq6510.scpi.exceptions import TcTypeValueError
+
+
 class ScpiCommands:
     IDENTIFY = "*IDN?"
     RESET = "*RST"
@@ -10,7 +13,9 @@ class ScpiCommands:
         return f'SENS:FUNC "TEMP", (@{channel})'
 
     @staticmethod
-    def set_thermocouple_type(channel: str, tc_type: Literal["B", "E", "J", "K", "N", "R", "S", "T"] = "K") -> str:
+    def set_thermocouple_type(channel: str, tc_type: str) -> str:
+        if tc_type not in ["B", "E", "J", "K", "N", "R", "S", "T"]:
+            raise TcTypeValueError(str(tc_type))
         return f"SENS:TEMP:TC:TYPE {tc_type}, (@{channel})"
 
     @staticmethod

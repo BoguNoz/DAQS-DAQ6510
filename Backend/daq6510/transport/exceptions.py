@@ -10,3 +10,6 @@ class InstrumentDisconnectedError(InstrumentError):
 
 class InstrumentNotFoundError(InstrumentError):
     pass
+
+class InstrumentWriteError(InstrumentError):
+    pass

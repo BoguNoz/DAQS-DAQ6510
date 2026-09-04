@@ -2,7 +2,7 @@ import pyvisa
 from pyvisa.constants import StatusCode
 
 from daq6510.transport.exceptions import InstrumentTimeoutError, InstrumentDisconnectedError, InstrumentNotFoundError, \
-    InstrumentError
+    InstrumentError, InstrumentWriteError
 
 
 class VisaConnection:
@@ -31,6 +31,11 @@ class VisaConnection:
 
             raise InstrumentError(str(e)) from e
 
+    def write(self, command: str) -> str:
+        try:
+            return self._instrument.write(command)
+        except pyvisa.errors.VisaIOError as e:
+            raise InstrumentWriteError(str(e)) from e
 
     def close(self):
         if self._instrument is not None:

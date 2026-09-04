@@ -8,3 +8,5 @@ class IdnFormatResponseError(CommandError):
 class ReadingValuesError(CommandError):
     pass
 
+class TcTypeValueError(CommandError):
+    pass

@@ -10,6 +10,9 @@ class DAQ6510:
     def connect(self):
         self._connection.open()
 
+    def initiate(self) -> None:
+        self._connection.write(ScpiCommands.INITIATE)
+
     def identify(self) -> dict:
         raw = self._connection.query(ScpiCommands.IDENTIFY)
         return parse_idn(raw)
@@ -29,8 +32,10 @@ class DAQ6510:
     def create_scan(self, channels: list[str]) -> None:
         self._connection.write(ScpiCommands.create_scan(channels))
 
-    def read_buffer(self, buffer_name: str) -> list[float]:
-        raw = self._connection.query(ScpiCommands.read_buffer(buffer_name))
+    def read_scan_data(self, count: int, buffer_name: str = "defbuffer1") -> dict[str, float]:
+        raw = self._connection.query(ScpiCommands.read_scan_data(count, buffer_name))
+        # TODO: nowy parser — rozdziela przeplatane pary (kanał, wartość)
+        # zamiast płaskiej listy floatów jak parse_reading_values
         return parse_reading_values(raw)
 
     def disconnect(self):

@@ -5,7 +5,7 @@ class CommandError(Exception):
 class IdnFormatResponseError(CommandError):
     pass
 
-class ReadingValuesError(CommandError):
+class ChannelReadingsError(CommandError):
     pass
 
 class TcTypeValueError(CommandError):

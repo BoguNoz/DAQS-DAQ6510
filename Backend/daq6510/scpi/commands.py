@@ -28,5 +28,5 @@ class ScpiCommands:
         return f"ROUT:SCAN:CRE (@{channel_list})"
 
     @staticmethod
-    def read_buffer(buffer_name: str = "defbuffer1") -> str:
-        return f'READ? "{buffer_name}"'
+    def read_scan_data(count: int, buffer_name: str = "defbuffer1") -> str:
+        return f'TRAC:DATA? 1, {count}, "{buffer_name}", CHAN, READ'

@@ -1,4 +1,4 @@
-from daq6510.scpi.exceptions import IdnFormatResponseError, ReadingValuesError
+from daq6510.scpi.exceptions import IdnFormatResponseError, ChannelReadingsError
 
 
 def parse_idn(raw_response: str) -> dict:
@@ -14,9 +14,19 @@ def parse_idn(raw_response: str) -> dict:
         "firmware_version": parts[3].strip(),
     }
 
-def parse_reading_values(raw_response: str) -> list[float]:
-    parts = raw_response.strip().split(",")
-    try:
-        return [float(p) for p in parts if p]
-    except ValueError as e:
-        raise ReadingValuesError(str(e)) from e
+def parse_channel_readings(raw_response: str) -> dict[str, float]:
+    parts = [p.strip() for p in raw_response.strip().split(",") if p]
+
+    if len(parts) % 2 != 0:
+        raise ChannelReadingsError()
+
+    result: dict[str, float] = {}
+    for i in range(0, len(parts), 2):
+        channel = parts[i]
+        value = parts[i + 1]
+        try:
+            result[channel] = float(value)
+        except ValueError as e:
+            raise ChannelReadingsError(str(e)) from e
+
+    return result

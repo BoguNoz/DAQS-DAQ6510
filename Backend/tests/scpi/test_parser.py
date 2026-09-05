@@ -1,4 +1,4 @@
-from daq6510.scpi.parser import parse_idn, parse_reading_values
+from daq6510.scpi.parser import parse_idn
 from daq6510.scpi.exceptions import IdnFormatResponseError, ReadingValuesError
 import pytest
 

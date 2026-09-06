@@ -76,7 +76,6 @@ class Orchestrator:
             except InstrumentError as e:
                 self._consecutive_errors += 1
                 if self._consecutive_errors >= self._max_consecutive_errors:
-                    # TODO: oznacz eksperyment jako nieudany (np. przez repository.deactivate) i zatrzymaj pętlę
                     self._stop_event.set()
             time.sleep(self._poll_interval)
 

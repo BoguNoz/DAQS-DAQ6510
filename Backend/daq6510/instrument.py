@@ -1,5 +1,5 @@
 from daq6510.scpi.commands import ScpiCommands
-from daq6510.scpi.parser import parse_idn, parse_reading_values
+from daq6510.scpi.parser import parse_channel_readings
 from daq6510.transport.visa_connection import VisaConnection
 
 
@@ -34,9 +34,7 @@ class DAQ6510:
 
     def read_scan_data(self, count: int, buffer_name: str = "defbuffer1") -> dict[str, float]:
         raw = self._connection.query(ScpiCommands.read_scan_data(count, buffer_name))
-        # TODO: nowy parser — rozdziela przeplatane pary (kanał, wartość)
-        # zamiast płaskiej listy floatów jak parse_reading_values
-        return parse_reading_values(raw)
+        return parse_channel_readings(raw)
 
     def disconnect(self):
         self._connection.close()

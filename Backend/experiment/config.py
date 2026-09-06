@@ -15,3 +15,6 @@ CHANNEL_MAP = {
     "thermocouple_2": ChannelRole("thermocouple_2", "102"),
     "voltage_probe": ChannelRole("voltage_probe", "103"),
 }
+
+KALMAN_PROCESS_VARIANCE = 1e-5   # TODO: skalibruj na realnych/symulowanych danych
+KALMAN_MEASUREMENT_VARIANCE = 1e-2  # TODO: skalibruj na realnych/symulowanych danych

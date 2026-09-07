@@ -15,5 +15,7 @@ async def handle_request(websocket, message: str, orchestrator) -> None:
         await websocket.send(json.dumps(orchestrator.get_full_history()))
     elif action == "stop":
         await asyncio.to_thread(orchestrator.stop)
+    elif action == "status":
+        await websocket.send(json.dumps({"connected": orchestrator.is_connected()}))
     else:
         await websocket.send(json.dumps({"error": f"unknown action: {action}"}))

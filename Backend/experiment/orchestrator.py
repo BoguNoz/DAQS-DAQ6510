@@ -66,6 +66,9 @@ class Orchestrator:
     def get_full_history(self) -> dict:
         return self._shared_data.full_history()
 
+    def is_connected(self) -> bool:
+        return self._consecutive_errors < self._max_consecutive_errors
+
     def _run_loop(self) -> None:
         while not self._stop_event.is_set():
             try:

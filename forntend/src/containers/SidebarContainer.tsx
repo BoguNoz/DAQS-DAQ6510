@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import Sidebar from "@/components/layout/Sidebar.tsx";
+import Sidebar from "@/components/layout/sidebar/Sidebar.tsx";
 import type {DeviceModel} from "@/models/device-model.ts";
 import * as React from "react";
 import {deviceStorage} from "@/helpers/device-storage.ts";

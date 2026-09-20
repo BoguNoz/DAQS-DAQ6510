@@ -1,0 +1,5 @@
+{
+    "thermocouple_1": {"slot": 1, "channel": 1},
+    "thermocouple_2": {"slot": 1, "channel": 2},
+    "voltage_probe": {"slot": 1, "channel": 3}
+}

@@ -3,7 +3,7 @@ import time
 
 from daq6510.instrument import DAQ6510
 from daq6510.transport.exceptions import InstrumentError
-from experiment.config import CHANNEL_MAP
+from experiment.config.config import ChannelRole
 from experiment.kalman import ScalarKalmanFilter
 from experiment.seebeck import calculate_seebeck_coefficient
 from experiment.stability import StabilityDetector
@@ -15,12 +15,14 @@ class Orchestrator:
     def __init__(
             self,
             daq: DAQ6510,
+            channel_map: dict[str, ChannelRole],
             process_variance: float,
             measurement_variance: float,
             poll_interval_seconds: float = 1.0,
             max_consecutive_errors: int = 5,
     ):
         self._daq = daq
+        self._channel_map = channel_map
         self._poll_interval = poll_interval_seconds
         self._shared_data = SharedExperimentData()
         self._temp_detector_1 = StabilityDetector()
@@ -43,10 +45,9 @@ class Orchestrator:
         self._thread.start()
 
     def _setup_channels(self) -> None:
-        from experiment.config import CHANNEL_MAP
-        t1 = CHANNEL_MAP["thermocouple_1"].address
-        t2 = CHANNEL_MAP["thermocouple_2"].address
-        voltage = CHANNEL_MAP["voltage_probe"].address
+        t1 = self._channel_map["thermocouple_1"].address
+        t2 = self._channel_map["thermocouple_2"].address
+        voltage = self._channel_map["voltage_probe"].address
 
         self._daq.set_function_temperature(t1)
         self._daq.set_thermocouple_type(t1, "K")
@@ -68,6 +69,12 @@ class Orchestrator:
 
     def is_connected(self) -> bool:
         return self._consecutive_errors < self._max_consecutive_errors
+
+    def is_running(self) -> bool:
+        return self._thread is not None and self._thread.is_alive()
+
+    def disconnect_instrument(self) -> None:
+        self._daq.disconnect()
 
     def _run_loop(self) -> None:
         while not self._stop_event.is_set():
@@ -92,8 +99,8 @@ class Orchestrator:
             self._stop_event.set()
 
     def _step_measuring_temperature(self, readings: dict[str, float]) -> None:
-        t1 = readings[CHANNEL_MAP["thermocouple_1"].address]
-        t2 = readings[CHANNEL_MAP["thermocouple_2"].address]
+        t1 = readings[self._channel_map["thermocouple_1"].address]
+        t2 = readings[self._channel_map["thermocouple_2"].address]
 
         self._temp_detector_1.add_sample(t1)
         self._temp_detector_2.add_sample(t2)
@@ -103,7 +110,7 @@ class Orchestrator:
             self._shared_data.transition_to(ExperimentState.MEASURING_VOLTAGE)
 
     def _step_measuring_voltage(self, readings: dict[str, float]) -> None:
-        raw_voltage = readings[CHANNEL_MAP["voltage_probe"].address]
+        raw_voltage = readings[self._channel_map["voltage_probe"].address]
 
         filtered_voltage = self._voltage_filter.update(raw_voltage)
 

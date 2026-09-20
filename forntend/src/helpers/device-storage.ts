@@ -2,14 +2,10 @@ import { GalleryVerticalEnd, AudioWaveform, Command } from "lucide-react";
 import type { DeviceModel } from "@/models/device-model";
 import type {StoredDevice} from "@/models/stored-device-model.ts";
 import * as React from "react";
+import {LogoMap} from "@/models/logo-map.ts";
 
 const STORAGE_KEY = "devices";
 
-const logoMap = {
-    gallery: GalleryVerticalEnd,
-    audio: AudioWaveform,
-    command: Command,
-};
 
 export const deviceStorage = {
     get(): DeviceModel[] {
@@ -23,7 +19,7 @@ export const deviceStorage = {
 
         return devices.map(device => ({
             ...device,
-            logo: logoMap[device.logo],
+            logo: LogoMap[device.logo],
         }));
     },
 

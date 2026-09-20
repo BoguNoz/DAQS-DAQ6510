@@ -209,14 +209,18 @@ const ItemContextMenu = observer((
         <ContextMenuContent className="w-48">
             <ContextMenuGroup>
                 <ContextMenuItem onClick={() => setActiveDevice(device)}>
-                    Select
+                    {en.deviceSwitcher.contextMenu.select}
                     <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem >
+                    {en.deviceSwitcher.contextMenu.edit}
+                    <ContextMenuShortcut>⌘]</ContextMenuShortcut>
                 </ContextMenuItem>
                 <ContextMenuSeparator />
                 <ContextMenuGroup onClick={() => deleteDevice(device.resourceAddress)}>
                     <ContextMenuItem variant="destructive">
                         <TrashIcon />
-                        Delete
+                        {en.deviceSwitcher.contextMenu.delete}
                     </ContextMenuItem>
                 </ContextMenuGroup>
             </ContextMenuGroup>

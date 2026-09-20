@@ -2,16 +2,26 @@ import asyncio
 import websockets
 
 from experiment.factory import build_orchestrator
+from experiment.orchestrator import Orchestrator
 from websocket.connections import register, unregister, connected_clients, broadcast
 from websocket.handlers import handle_request
 
-orchestrator = build_orchestrator()
+class OrchestratorHolder:
+    def __init__(self):
+        self.current: Orchestrator = build_orchestrator()
+
+    def rebuild(self) -> None:
+        old = self.current
+        old.disconnect_instrument()
+        self.current = build_orchestrator()
+
+holder = OrchestratorHolder()
 
 async def handle(websocket):
     register(websocket)
     try:
         async for message in websocket:
-            await handle_request(websocket, message, orchestrator)
+            await handle_request(websocket, message, holder)
     except websockets.exceptions.ConnectionClosed:
         pass
     finally:
@@ -19,7 +29,7 @@ async def handle(websocket):
 
 async def broadcast_loop(interval: float = 1.0) -> None:
     while True:
-        state = orchestrator.get_current_state()
+        state = holder.current.get_current_state()
         await broadcast(state)
         await asyncio.sleep(interval)
 

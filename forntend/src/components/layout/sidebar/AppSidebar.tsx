@@ -1,20 +1,20 @@
 "use client"
 
-import {Sidebar, SidebarHeader} from "@/components/ui/sidebar";
-import {observer} from "mobx-react-lite";
-import type {DeviceModel} from "@/models/device-model.ts";
-import DeviceSwitcher from "@/components/layout/sidebar/DeviceSwitcher.tsx";
+import { Sidebar, SidebarHeader } from "@/components/ui/sidebar"
+import { observer } from "mobx-react-lite"
+import type { DeviceModel } from "@/models/device-model.ts"
+import DeviceSwitcher from "@/components/layout/sidebar/DeviceSwitcher.tsx"
 
-interface AppSidebarProps {
-    getDevices: () => DeviceModel[];
-    deleteDevice: (resourceAddress: string) => void;
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+    getDevices: () => DeviceModel[]
+    deleteDevice: (resourceAddress: string) => void
 }
 
 const AppSidebar = observer((props: AppSidebarProps) => {
-    const {getDevices, deleteDevice} = props;
+    const { getDevices, deleteDevice, ...sidebarProps } = props
 
     return (
-        <Sidebar collapsible="icon">
+        <Sidebar collapsible="offcanvas" {...sidebarProps}>
             <SidebarHeader>
                 <DeviceSwitcher
                     getDevices={getDevices}
@@ -24,7 +24,6 @@ const AppSidebar = observer((props: AppSidebarProps) => {
             </SidebarHeader>
         </Sidebar>
     )
-});
+})
 
-export default AppSidebar;
-
+export default AppSidebar

@@ -22,6 +22,7 @@ import {
     ContextMenuShortcut,
     ContextMenuTrigger
 } from "@/components/ui/context-menu.tsx";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -29,10 +30,11 @@ interface DeviceSwitcherProps {
     getDevices: () => DeviceModel[];
     deleteDevice: (resourceAddress: string) => void;
     getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
+    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
 }
 
 const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
-    const {getDevices, deleteDevice, getDeviceConnectionStatus} = props;
+    const {getDevices, deleteDevice, getDeviceConnectionStatus, handleNavigateToDevice} = props;
 
     const [devices, setDevices] = React.useState<DeviceModel[]>(() => getDevices());
 
@@ -68,6 +70,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
                         devices={devices}
                         setActiveDevice={setActiveDevice}
                         deleteDevice={handleDeleteDevice}
+                        handleNavigateToDevice={handleNavigateToDevice}
                     />
                 </DropdownMenu>
             </SidebarMenuItem>
@@ -131,10 +134,11 @@ const MenuContent = observer((
         devices: DeviceModel[],
         setActiveDevice:React.Dispatch<React.SetStateAction<DeviceModel>>
         deleteDevice: (resourceAddress: string) => void;
+        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
     }
 ) => {
 
-    const {devices, setActiveDevice, deleteDevice} = props;
+    const {devices, setActiveDevice, deleteDevice, handleNavigateToDevice} = props;
 
     return (
         <DropdownMenuContent
@@ -159,16 +163,14 @@ const MenuContent = observer((
                         device={device}
                         deleteDevice={deleteDevice}
                         setActiveDevice={setActiveDevice}
+                        handleNavigateToDevice={handleNavigateToDevice}
                     />
                 </ContextMenu>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-                <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                    <Plus className="size-4" />
-                </div>
-                <div className="font-medium text-muted-foreground">{en.deviceSwitcher.addButtonLabel}</div>
-            </DropdownMenuItem>
+            <Button variant="ghost" className="w-full" onClick={() => handleNavigateToDevice("add")}>
+                <Plus className="size-4" /> {en.deviceSwitcher.addButtonLabel}
+            </Button>
         </DropdownMenuContent>
     );
 });
@@ -201,9 +203,10 @@ const ItemContextMenu = observer((
         device: DeviceModel,
         setActiveDevice: React.Dispatch<React.SetStateAction<DeviceModel>>
         deleteDevice: (resourceAddress: string) => void;
+        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
     }
 ) => {
-    const {device, setActiveDevice, deleteDevice} = props;
+    const {device, setActiveDevice, deleteDevice, handleNavigateToDevice} = props;
 
     return (
         <ContextMenuContent className="w-48">
@@ -212,9 +215,13 @@ const ItemContextMenu = observer((
                     {en.deviceSwitcher.contextMenu.select}
                     <ContextMenuShortcut>⌘[</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem >
+                <ContextMenuItem onClick={() => handleNavigateToDevice("edit", device.name, device.resourceAddress)}>
                     {en.deviceSwitcher.contextMenu.edit}
                     <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => handleNavigateToDevice("inspect", device.name, device.resourceAddress)}>
+                    {en.deviceSwitcher.contextMenu.info}
+                    <ContextMenuShortcut>⌘i</ContextMenuShortcut>
                 </ContextMenuItem>
                 <ContextMenuSeparator />
                 <ContextMenuGroup onClick={() => deleteDevice(device.resourceAddress)}>

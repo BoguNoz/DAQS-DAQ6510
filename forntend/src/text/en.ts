@@ -11,6 +11,7 @@ export const en = {
             select: "Select",
             delete: "Delete",
             edit: "Edit",
+            info: "Info",
         },
     },
     devicePage: {

@@ -17,10 +17,11 @@ import { Fragment } from "react"
 interface SidebarProps {
     getDevices: () => DeviceModel[]
     deleteDevice: (resourceAddress: string) => void
+    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceId?: string) => void
 }
 
 const Sidebar = observer((props: SidebarProps) => {
-    const { getDevices, deleteDevice } = props
+    const { getDevices, deleteDevice, handleNavigateToDevice } = props
 
     return (
         <SidebarProvider>
@@ -28,6 +29,7 @@ const Sidebar = observer((props: SidebarProps) => {
                 variant="inset"
                 getDevices={getDevices}
                 deleteDevice={deleteDevice}
+                handleNavigateToDevice={handleNavigateToDevice}
             />
             <Inset />
         </SidebarProvider>

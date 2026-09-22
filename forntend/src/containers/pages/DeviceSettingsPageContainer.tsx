@@ -12,7 +12,7 @@ import {useParams} from "react-router-dom";
 
 
 const DeviceSettingsPageContainer = observer(() => {
-    const { variant } = useParams();
+    const { variant, deviceName, deviceId } = useParams();
 
     const validVariant = (["inspect", "edit", "add"].includes(variant!) ? variant : "inspect") as "inspect" | "edit" | "add";
 

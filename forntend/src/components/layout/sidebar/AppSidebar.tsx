@@ -8,10 +8,11 @@ import DeviceSwitcher from "@/components/layout/sidebar/DeviceSwitcher.tsx"
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     getDevices: () => DeviceModel[]
     deleteDevice: (resourceAddress: string) => void
+    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
 }
 
 const AppSidebar = observer((props: AppSidebarProps) => {
-    const { getDevices, deleteDevice, ...sidebarProps } = props
+    const { getDevices, deleteDevice, handleNavigateToDevice, ...sidebarProps } = props
 
     return (
         <Sidebar collapsible="offcanvas" {...sidebarProps}>
@@ -20,6 +21,7 @@ const AppSidebar = observer((props: AppSidebarProps) => {
                     getDevices={getDevices}
                     deleteDevice={deleteDevice}
                     getDeviceConnectionStatus={() => true}
+                    handleNavigateToDevice={handleNavigateToDevice}
                 />
             </SidebarHeader>
         </Sidebar>

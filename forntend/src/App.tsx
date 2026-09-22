@@ -3,7 +3,7 @@ import SidebarContainer from "@/containers/SidebarContainer.tsx";
 import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {en} from "@/text/en.ts";
-import DevicePage from "@/components/pages/DevicePage.tsx";
+import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageContainer.tsx";
 
 
 const router = createBrowserRouter([
@@ -12,10 +12,18 @@ const router = createBrowserRouter([
         element: <SidebarContainer />,
         handle: { crumb: () => en.crumbs.root },
         children: [
+            // Domyślne przekierowanie z / na np. /device/inspect lub widok główny
             {
                 index: true,
-                element: <DevicePage />,
-                handle: { crumb: () => en.crumbs.dashboardPage },
+                element: <DashboardPage />,
+                handle: { crumb: () => en.crumbs.settingsPage },
+            },
+            {
+                path: "device/:variant",
+                element: <DeviceSettingsPageContainer />,
+                handle: {
+                    crumb: (data) => `${en.crumbs.settingsPage} (${data.params.variant})`
+                },
             },
         ],
     },

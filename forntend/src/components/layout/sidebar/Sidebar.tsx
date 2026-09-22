@@ -66,9 +66,7 @@ const Inset = observer(() => {
                     </Breadcrumb>
                 </div>
             </header>
-            <Separator
-                orientation="horizontal"
-            />
+            <Separator orientation="horizontal"/>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                 <Outlet />
             </div>

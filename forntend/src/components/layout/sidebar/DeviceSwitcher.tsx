@@ -57,7 +57,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
     }
 
     return (
-        <SidebarMenu>
+        <SidebarMenu className="border rounded-2xl">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <MenuTrigger
@@ -167,7 +167,7 @@ const MenuContent = observer((
                 <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                     <Plus className="size-4" />
                 </div>
-                <div className="font-medium text-muted-foreground">Add team</div>
+                <div className="font-medium text-muted-foreground">{en.deviceSwitcher.addButtonLabel}</div>
             </DropdownMenuItem>
         </DropdownMenuContent>
     );

@@ -1,5 +1,7 @@
+import { LogoMap } from "@/models/logo-map.ts";
+
 export interface StoredDevice {
     name: string;
-    logo: "gallery" | "audio" | "command";
+    logo: keyof typeof LogoMap;
     resourceAddress: string;
 }

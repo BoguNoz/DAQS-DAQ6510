@@ -1,8 +1,5 @@
-import { GalleryVerticalEnd, AudioWaveform, Command } from "lucide-react";
 import type { DeviceModel } from "@/models/device-model";
 import type { StoredDevice } from "@/models/stored-device-model.ts";
-import * as React from "react";
-import { LogoMap } from "@/models/logo-map.ts";
 
 const STORAGE_KEY = "devices";
 
@@ -14,34 +11,26 @@ export const deviceStorage = {
             return [];
         }
 
-        const devices: StoredDevice[] = JSON.parse(value);
-
-        return devices.map(device => ({
-            ...device,
-            logo: LogoMap[device.logo] || GalleryVerticalEnd,
-        }));
+        try {
+            const devices: StoredDevice[] = JSON.parse(value);
+            return devices; // Zwracamy bezpośrednio, bo struktura jest identyczna
+        } catch {
+            return [];
+        }
     },
 
     remove(resourceAddress: string) {
         const devices = this.get();
-
         const filteredDevices = devices.filter(
             device => device.resourceAddress !== resourceAddress
         );
-
         this.set(filteredDevices);
     },
 
     set(devices: DeviceModel[]) {
-        const storedDevices: StoredDevice[] = devices.map(device => ({
-            name: device.name,
-            resourceAddress: device.resourceAddress,
-            logo: getLogoKey(device.logo),
-        }));
-
         localStorage.setItem(
             STORAGE_KEY,
-            JSON.stringify(storedDevices)
+            JSON.stringify(devices)
         );
     },
 
@@ -49,9 +38,3 @@ export const deviceStorage = {
         localStorage.removeItem(STORAGE_KEY);
     },
 };
-
-function getLogoKey(logo: React.ElementType): string {
-    const entry = Object.entries(LogoMap).find(([_, LogoComponent]) => LogoComponent === logo);
-
-    return entry ? entry[0] : "gallery";
-}

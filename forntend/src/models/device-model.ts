@@ -1,7 +1,11 @@
-import * as React from "react";
+import { LogoMap } from "@/models/logo-map.ts";
+
+export type LogoKey = keyof typeof LogoMap;
 
 export interface DeviceModel {
     name: string;
-    logo: React.ElementType;
+    logo: LogoKey;
     resourceAddress: string;
 }
+
+export type StoredDevice = DeviceModel;

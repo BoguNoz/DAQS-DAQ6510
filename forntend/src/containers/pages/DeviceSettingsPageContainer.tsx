@@ -20,6 +20,7 @@ const DeviceSettingsPageContainer = observer(() => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
+            logo: "cpu",
             resourceAddress: "",
             thermocouple_1_slot: "",
             thermocouple_1_channel: "",
@@ -40,6 +41,8 @@ const DeviceSettingsPageContainer = observer(() => {
             position: "bottom-right",
         });
     }, []);
+
+    const handleEditabilyty
 
 
     return (

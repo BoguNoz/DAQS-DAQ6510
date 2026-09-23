@@ -2,6 +2,7 @@ import * as z from "zod";
 
 export const formFields = {
     name: "name",
+    logo: "logo",
     resourceAddress: "resourceAddress",
     thermocouple_1_slot: "thermocouple_1_slot",
     thermocouple_1_channel: "thermocouple_1_channel",

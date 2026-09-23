@@ -27,5 +27,6 @@ export const en = {
         thermocouple_1: "Thermocouple 1",
         thermocouple_2: "Thermocouple 2",
         voltage:        "Voltage",
+        slot: "Slot",
     },
 };

@@ -9,7 +9,7 @@ import {
     DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import {ChevronsUpDown, Plus, TrashIcon} from "lucide-react";
+import {ChevronsUpDown, GalleryVerticalEnd, Plus, TrashIcon} from "lucide-react";
 import {en} from "@/text/en.ts";
 import {Marker, MarkerContent, MarkerIcon} from "@/components/ui/marker.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -23,6 +23,7 @@ import {
     ContextMenuTrigger
 } from "@/components/ui/context-menu.tsx";
 import { Button } from "@/components/ui/button";
+import {LogoMap} from "@/models/logo-map.ts";
 
 
 
@@ -59,7 +60,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
     }
 
     return (
-        <SidebarMenu className="border rounded-2xl">
+        <SidebarMenu className="border rounded-md">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <MenuTrigger
@@ -87,6 +88,8 @@ const MenuTrigger = observer((
 ) => {
     const {device} = props;
 
+    const IconComponent = LogoMap[device.logo] || GalleryVerticalEnd;
+
     return (
         <DropdownMenuTrigger asChild>
             <SidebarMenuButton
@@ -94,12 +97,12 @@ const MenuTrigger = observer((
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <device.logo className="size-4" />
+                    <IconComponent className="size-4" />
                 </div>
-               <ConnectionState
-                   device={device}
-                   getDeviceConnectionStatus={props.getDeviceConnectionStatus}
-               />
+                <ConnectionState
+                    device={device}
+                    getDeviceConnectionStatus={props.getDeviceConnectionStatus}
+                />
                 <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
         </DropdownMenuTrigger>
@@ -183,6 +186,8 @@ const MenuItem = observer((
 ) => {
     const {index, device, setActiveDevice} = props;
 
+    const IconComponent = LogoMap[device.logo] || GalleryVerticalEnd;
+
     return (
         <DropdownMenuItem
             key={device.name}
@@ -190,7 +195,7 @@ const MenuItem = observer((
             className="gap-2 p-2"
         >
             <div className="flex size-6 items-center justify-center rounded-md border">
-                <device.logo className="size-3.5 shrink-0" />
+                <IconComponent className="size-3.5 shrink-0" />
             </div>
             {device.name}
             <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>

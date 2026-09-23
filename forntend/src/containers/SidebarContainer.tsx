@@ -23,17 +23,17 @@ const SidebarContainer = observer(() => {
         const defaults: DeviceModel[] = [
             {
                 name: "Acme Inc",
-                logo: GalleryVerticalEnd,
+                logo: "radio",
                 resourceAddress: "acme-inc",
             },
             {
                 name: "Acme Corp.",
-                logo: AudioWaveform,
+                logo: "router",
                 resourceAddress: "acme-corp",
             },
             {
                 name: "Evil Corp.",
-                logo: Command,
+                logo: "cpu",
                 resourceAddress: "evil-corp",
             },
         ];

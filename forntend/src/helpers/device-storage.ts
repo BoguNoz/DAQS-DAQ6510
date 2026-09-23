@@ -1,5 +1,4 @@
-import type { DeviceModel } from "@/models/device-model";
-import type { StoredDevice } from "@/models/stored-device-model.ts";
+import type {DeviceModel, StoredDevice} from "@/models/device-model";
 
 const STORAGE_KEY = "devices";
 
@@ -13,10 +12,29 @@ export const deviceStorage = {
 
         try {
             const devices: StoredDevice[] = JSON.parse(value);
-            return devices; // Zwracamy bezpośrednio, bo struktura jest identyczna
+            return devices;
         } catch {
             return [];
         }
+    },
+
+    getByAddress(resourceAddress: string): DeviceModel | undefined {
+        const devices = this.get();
+        return devices.find(device => device.resourceAddress === resourceAddress);
+    },
+
+    save(device: DeviceModel, originalAddress?: string) {
+        const devices = this.get();
+        const targetAddress = originalAddress || device.resourceAddress;
+        const index = devices.findIndex(d => d.resourceAddress === targetAddress);
+
+        if (index >= 0) {
+            devices[index] = device;
+        } else {
+            devices.push(device);
+        }
+
+        this.set(devices);
     },
 
     remove(resourceAddress: string) {
@@ -28,10 +46,7 @@ export const deviceStorage = {
     },
 
     set(devices: DeviceModel[]) {
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(devices)
-        );
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(devices));
     },
 
     clear() {

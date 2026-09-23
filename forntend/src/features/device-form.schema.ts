@@ -14,6 +14,7 @@ export const formFields = {
 
 export const formSchema = z.object({
     name: z.string().min(5, "Name must be at least 5 characters.").max(32),
+    logo: z.string(),
     resourceAddress: z.string().min(1, "Resource address is required."),
     thermocouple_1_slot: z.string().min(1, "Select a slot"),
     thermocouple_1_channel: z.string().min(1, "Enter a channel"),

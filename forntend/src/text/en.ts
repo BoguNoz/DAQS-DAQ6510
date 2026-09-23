@@ -28,5 +28,17 @@ export const en = {
         thermocouple_2: "Thermocouple 2",
         voltage:        "Voltage",
         slot: "Slot",
+        buttons: {
+            edit: "Edit",
+            save: "Save",
+            cancel: "Cancel",
+            add: "Add",
+            delete: "Delete",
+        }
+    },
+    toast: {
+        deviceAdd: "Device added successfully",
+        deviceUpdate: "Device updated",
+        deviceDelete: "Device deleted",
     },
 };

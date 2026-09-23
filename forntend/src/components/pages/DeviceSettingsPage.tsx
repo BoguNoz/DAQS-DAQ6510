@@ -1,23 +1,28 @@
 import { observer } from "mobx-react-lite";
 import { FieldError, FieldLabel } from "@/components/ui/field.tsx";
 import { en } from "@/text/en.ts";
-import {Link, Computer, CheckCircle2} from "lucide-react";
+import {Link, Computer, CheckCircle2, CircleX, PlusCircle, Trash2, PencilLine, Undo2} from "lucide-react";
 import { Input } from "@/components/ui/input.tsx";
 import { LogoMap } from "@/models/logo-map.ts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card.tsx";
-import {Controller, type UseFormReturn} from "react-hook-form";
+import {Controller, type UseFormReturn, useFormState} from "react-hook-form";
 import * as z from "zod";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import {formPrefix} from "@/containers/pages/constants";
 import {formFields, type formSchema} from "@/features/device-form.schema.ts";
 import {Separator} from "@/components/ui/separator.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {ButtonGroup} from "@/components/ui/button-group.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 
 
 interface DeviceSettingsPageProps {
     form: UseFormReturn<any, any, any>
     onSubmit: (data: z.infer<typeof formSchema>) => void
+    handleEditability: (variant?: "inspect" | "edit" | "add") => boolean;
+    handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
+    handleDelete: () => void
     variant?: "inspect" | "edit" | "add"
 }
 
@@ -25,30 +30,29 @@ interface DeviceSettingsPageProps {
 const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
     const [disable, setDisable ] = useState(false);
 
-    const { form, onSubmit, variant } = props;
+    const { form, onSubmit, variant, handleEditability, handleNavigateToDevice, handleDelete } = props;
 
+    useEffect(() => {
+        setDisable(handleEditability(variant))
+    }, [handleEditability, variant]);
 
     return (
         <div className="min-h-screen p-6 flex flex-col pl-10 pr-10">
-            <div className="flex items-center justify-between px-2 w-full">
-                <button
-                    type="submit"
-                    form={formPrefix}
-                    className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 dark:bg-zinc-50 px-4 py-2 text-xs font-semibold text-zinc-50 dark:text-zinc-900 shadow-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-                >
-                    <CheckCircle2 className="size-4" />
-                    Zapisz zmiany
-                </button>
-            </div>
+           <ContextButtons
+               variant={variant}
+               handleNavigateToDevice={handleNavigateToDevice}
+               handleDelete={handleDelete}
+               form={form}
+           />
 
-            <div className="w-full space-y-6 flex flex-col items-start">
+            <div className="w-full space-y-6 flex flex-col items-start pt-10">
                 <form id={formPrefix} onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-                    <fieldset disabled={variant === "inspect"} className="w-full space-y-6 group">
+                    <fieldset disabled={disable} className="w-full space-y-6 group">
                         <div className="flex flex-col md:flex-row gap-6 w-full">
                             <div className="w-full md:w-5/12">
                                 <ChannelMapping
                                     form={form}
-                                    disabled={variant === "inspect"}
+                                    disabled={disable}
                                 />
                             </div>
                             <div className="w-full md:w-7/12">
@@ -63,6 +67,82 @@ const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
 
         </div>
     );
+});
+
+
+const ContextButtons = observer((
+    props: {
+        variant?: "inspect" | "edit" | "add"
+        handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
+        handleDelete: () => void
+        form: UseFormReturn<any, any, any>
+    }
+) => {
+    const {variant, handleNavigateToDevice, handleDelete, form} = props;
+
+    const { isDirty } = useFormState({ control: form.control });
+
+    if (variant === "add") {
+        return (
+            <ButtonGroup>
+                <Button type="submit" form={formPrefix}>
+                    <CheckCircle2 />
+                    {en.devicePage.buttons.save}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!isDirty}
+                    onClick={() => form.reset()}
+                >
+                    <Undo2 className="size-4 mr-2" />
+                </Button>
+            </ButtonGroup>
+        )
+    }
+
+    if (variant === "edit") {
+        return (
+            <ButtonGroup>
+                <Button type="submit" form={formPrefix}>
+                    <CheckCircle2 />
+                    {en.devicePage.buttons.save}
+                </Button>
+                <Button
+                    onClick={() => handleNavigateToDevice("add")}
+                    className="bg-[var(--ok-accent)]"
+                >
+                    <PlusCircle/>
+                    {en.devicePage.buttons.add}
+                </Button>
+                <Button onClick={() => handleDelete()} className="bg-destructive">
+                    <Trash2/>
+                    {en.devicePage.buttons.delete}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!isDirty}
+                    onClick={() => form.reset()}
+                >
+                    <Undo2 className="size-4 mr-2" />
+                </Button>
+            </ButtonGroup>
+        )
+    }
+
+    if (variant === "inspect") {
+        return (
+            <ButtonGroup>
+                <Button onClick={() => handleNavigateToDevice("edit")}>
+                    <PencilLine />
+                    {en.devicePage.buttons.edit}
+                </Button>
+            </ButtonGroup>
+        )
+    }
+
+    return null;
 });
 
 

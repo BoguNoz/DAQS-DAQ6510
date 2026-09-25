@@ -28,13 +28,8 @@ interface DeviceSettingsPageProps {
 
 
 const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
-    const [disable, setDisable ] = useState(false);
-
     const { form, onSubmit, variant, handleEditability, handleNavigateToDevice, handleDelete } = props;
-
-    useEffect(() => {
-        setDisable(handleEditability(variant))
-    }, [handleEditability, variant]);
+    const disable = handleEditability(variant);
 
     return (
         <div className="min-h-screen p-6 flex flex-col pl-10 pr-10">

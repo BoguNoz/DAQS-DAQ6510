@@ -3,6 +3,7 @@ export const en = {
         root: "DAQS",
         dashboardPage: "Data Fetching",
         settingsPage: "Settings",
+        dataTablePage: "Experiment Data",
     },
     deviceSwitcher: {
         menuContentLabel: "Devices",
@@ -34,6 +35,24 @@ export const en = {
             cancel: "Cancel",
             add: "Add",
             delete: "Delete",
+        }
+    },
+    dataTablePage: {
+        table: {
+            timeColumn: "Time",
+            userColumn: "User",
+            deviceColumn: "Device",
+            thermocouple_1Column: "T1",
+            thermocouple_2Column: "T2",
+            voltageColumn: "Voltage",
+        },
+        filtering: {
+            columnFiltering: "Customize Columns",
+        },
+        footer: {
+            rowsPerPage: "Rows per page",
+            pageOf: "of",
+            rowSelected: "row(s) selected",
         }
     },
     toast: {

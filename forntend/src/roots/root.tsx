@@ -3,10 +3,12 @@ import SidebarContainer from "@/containers/SidebarContainer.tsx";
 import {en} from "@/text/en.ts";
 import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageContainer.tsx";
+import DataTablePageContainer from "@/containers/pages/DataTablePageContainer.tsx";
 
 export const roots = {
     dashboard: "dashboard",
     device: "device",
+    dataTable: "data",
 }
 
 export const router = createBrowserRouter([
@@ -33,6 +35,11 @@ export const router = createBrowserRouter([
                         return `${en.crumbs.settingsPage}`;
                     }
                 },
+            },
+            {
+                path: `${roots.dataTable}`,
+                element: <DataTablePageContainer />,
+                handle: {crumb: () => en.crumbs.dataTablePage},
             },
         ],
     },

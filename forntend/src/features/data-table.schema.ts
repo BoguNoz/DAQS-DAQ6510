@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {
     columnFilteringFeature,
+    createCoreRowModel,
     columnVisibilityFeature, createFilteredRowModel, createPaginatedRowModel, createSortedRowModel,
     rowPaginationFeature, rowSelectionFeature, rowSortingFeature,
     tableFeatures
@@ -15,6 +16,7 @@ export const features = tableFeatures({
     filteredRowModel: createFilteredRowModel(),
     paginatedRowModel: createPaginatedRowModel(),
     sortedRowModel: createSortedRowModel(),
+    coreRowModel: createCoreRowModel(),
 });
 
 export const dataTableFields = {

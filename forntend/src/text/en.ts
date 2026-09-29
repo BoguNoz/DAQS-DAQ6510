@@ -47,7 +47,13 @@ export const en = {
             voltageColumn: "Voltage",
         },
         filtering: {
-            columnFiltering: "Customize Columns",
+            columnFiltering: "View",
+            dataFiltering: "Filters",
+            timeForm: "Time From",
+            timeTo: "Time To",
+            allDevices: "All devices",
+            apply: "Apply",
+            reset: "Reset",
         },
         footer: {
             rowsPerPage: "Rows per page",

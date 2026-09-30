@@ -14,7 +14,7 @@ import UserAvatarCell from "@/components/layout/data-table/UserAvatarCell.tsx";
 import DeviceCell from "@/components/layout/data-table/DeviceCell.tsx";
 import type {LogoKey} from "@/models/device-model.ts";
 import DateCell from "@/components/layout/data-table/DateCell.tsx";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 
 const devices = [
@@ -64,20 +64,17 @@ const DataTablePageContainer = observer(() => {
     const [sorting, setSorting] = useState<SortingState>([]);
 
     const deviceOptions = useMemo(() => {
-        const uniqueDevices = new Map<string, { name: string; logo: string }>();
+        const uniqueDevices: string[] = [];
 
+
+        // TODO Trzeba dodać metode do data stora
         mockDataTable.forEach((row) => {
-            if (!uniqueDevices.has(row.device.name)) {
-                uniqueDevices.set(row.device.name, row.device);
-            }
+           uniqueDevices.push(row.device.name)
         });
 
-        return Array.from(uniqueDevices.values()).map((device) => ({
-            value: device.name,
-            label: device.name,
-            icon: LogoMap[device.logo as LogoKey],
-        }));
+        return uniqueDevices;
     }, [])
+
 
     useEffect(() => {
         let cancelled = false;
@@ -236,6 +233,8 @@ const DataTablePageContainer = observer(() => {
 
             getFilterValue={getFilterValue}
             setFilterValue={setFilterValue}
+
+            deviceOptions={deviceOptions}
             isLoading={isLoading}
         />
     );

@@ -24,14 +24,12 @@ import {ChevronDownIcon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
 import {en} from "@/text/en.ts";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {Label} from "@/components/ui/label.tsx";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
-import {LogoMap} from "@/models/logo-map.ts";
 import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
 import { format } from "date-fns"
 import {Calendar} from "@/components/ui/calendar.tsx";
-import type {LogoKey} from "@/models/device-model.ts";
 
 export interface RangeValue {
     min?: number;
@@ -62,6 +60,8 @@ interface DataTablePageProps {
 
     getFilterValue: <T>(filters: ColumnFiltersState, id: string) => (T | undefined);
     setFilterValue: (filters: ColumnFiltersState, id: string, value: unknown) => ColumnFilter[]
+
+    deviceOptions: string[]
     isLoading?: boolean;
 }
 
@@ -80,6 +80,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
         onColumnFilterChange,
         getFilterValue,
         setFilterValue,
+        deviceOptions,
         isLoading,
     } = props;
 
@@ -118,7 +119,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
                     table={table}
                     columnFilters={columnFilters}
                     onColumnFiltersChange={onColumnFilterChange}
-                    deviceOptions={Object.keys(LogoMap)}
+                    deviceOptions={deviceOptions}
                     getFilterValue={getFilterValue}
                     setFilterValue={setFilterValue}
                 />
@@ -446,15 +447,11 @@ const DataTableFilters = observer((
                             <SelectItem value="__all__">
                                 {en.dataTablePage.filtering.allDevices}
                             </SelectItem>
-                            <SelectGroup>
-                                {Object.entries(LogoMap).map(([key, IconComponent]) => (
-                                    <SelectItem key={key} value={key}>
-                                        <div className="flex items-center gap-2">
-                                            <IconComponent className="size-4 shrink-0" />
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
+                            {deviceOptions.map((name) => (
+                                <SelectItem key={name} value={name}>
+                                    {name}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>

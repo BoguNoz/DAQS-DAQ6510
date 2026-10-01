@@ -105,7 +105,6 @@ const ContextButtons = observer((
                 </Button>
                 <Button
                     onClick={() => handleNavigateToDevice("add")}
-                    className="bg-[var(--ok-accent)]"
                 >
                     <PlusCircle/>
                     {en.devicePage.buttons.add}

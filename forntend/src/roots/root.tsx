@@ -4,6 +4,7 @@ import {en} from "@/text/en.ts";
 import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageContainer.tsx";
 import DataTablePageContainer from "@/containers/pages/DataTablePageContainer.tsx";
+import DashboardPageContainer from "@/containers/pages/DashboardPageContainer.tsx";
 
 export const roots = {
     dashboard: "dashboard",
@@ -19,7 +20,8 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <DashboardPage />,
+                path: `dashboard`,
+                element: <DashboardPageContainer />,
                 handle: { crumb: () => en.crumbs.dashboardPage },
             },
             {

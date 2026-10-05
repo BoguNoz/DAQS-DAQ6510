@@ -1,100 +1,93 @@
-from database.domain.repositories.measurement_repository import IMeasurementRepository
-from database.infrastructure.dtatabase.connection import get_connection
+from sqlalchemy.orm import Session
+from sqlalchemy import select, func, and_
 from database.domain.models.measurement import Measurement
+from database.infrastructure.models.measurement import MeasurementORM
 
-_RANGE_FIELDS = {"t1": "m.t1", "t2": "m.t2", "voltage": "m.voltage"}
-class MeasurementRepository(IMeasurementRepository):
+class MeasurementRepository:
+    def __init__(self, session: Session):
+        self.session = session
+
     def create(self, model: Measurement) -> None:
-        conn = get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO measurements (device_id, time, t1, t2, voltage) VALUES (%s, %s, %s, %s, %s)",
-                (model.device_id, model.time, model.t1, model.t2, model.voltage),
-            )
-            conn.commit()
-        finally:
-            conn.close()
+        orm = MeasurementORM(
+            device_id=model.device_id,
+            time=model.time,
+            t1=model.t1,
+            t2=model.t2,
+            voltage=model.voltage,
+        )
+        self.session.add(orm)
+        self.session.commit()
 
     def list(
-            self,
-            filters: list[dict],
-            page_index: int,
-            page_size: int,
-    ) -> tuple[list[Measurement], int]:
-        where_clauses: list[str] = []
-        params: list = []
-
-        where_sql = self._create_where_sql(filters, where_clauses, params)
-        conn = get_connection()
-
-        try:
-            cursor = conn.cursor(dictionary=True)
-
-            cursor.execute(
-                f"""SELECT COUNT(*) AS total
-                    FROM measurements m
-                    {where_sql}""",
-                params,
-            )
-            total = cursor.fetchone()["total"]
-
-            cursor.execute(
-                f"""SELECT m.id , m.time, m.t1, m.t2, m.voltage
-                    FROM measurements m
-                    {where_sql}
-                    ORDER BY m.time DESC
-                    LIMIT %s OFFSET %s""",
-                params + [page_size, page_index * page_size],
-            )
-            rows = cursor.fetchall()
-
-            result: list[Measurement] = []
-            for row in rows:
-                result.append(Measurement(
-                    id=row["id"],
-                    device_id=row["device_id"],
-                    time=row["time"],
-                    t1=row["t1"],
-                    t2=row["t2"],
-                    voltage=row["voltage"],
-                ))
-
-            return result, total
-        finally:
-            conn.close()
-
-
-    def _create_where_sql(
         self,
         filters: list[dict],
-        where_clauses: list[str],
-        params: list
-    ) -> str:
+        page_index: int,
+        page_size: int,
+    ) -> tuple[list[Measurement], int]:
+        stmt = select(MeasurementORM)
+        count_stmt = select(func.count()).select_from(MeasurementORM)
+
+        conditions = self._build_conditions(filters)
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
+            count_stmt = count_stmt.where(and_(*conditions))
+
+        total = self.session.scalar(count_stmt) or 0
+
+        stmt = (
+            stmt
+            .order_by(MeasurementORM.time.desc())
+            .offset(page_index * page_size)
+            .limit(page_size)
+        )
+        rows = self.session.scalars(stmt).all()
+
+        result = [
+            Measurement(
+                id=row.id,
+                device_id=row.device_id,
+                time=row.time,
+                t1=row.t1,
+                t2=row.t2,
+                voltage=row.voltage,
+            )
+            for row in rows
+        ]
+        return result, total
+
+    def _build_conditions(self, filters: list[dict]) -> list:
+        conditions = []
+
         for f in filters:
             field_id = f.get("id")
             value = f.get("value")
 
             if field_id == "time" and value:
                 if value.get("from"):
-                    where_clauses.append("m.time >= %s")
-                    params.append(value["from"])
+                    conditions.append(MeasurementORM.time >= value["from"])
                 if value.get("to"):
-                    where_clauses.append("m.time <= %s")
-                    params.append(value["to"])
+                    conditions.append(MeasurementORM.time <= value["to"])
 
             elif field_id == "device" and value:
-                where_clauses.append("d.name = %s")
-                params.append(value)
+                conditions.append(MeasurementORM.device_id == value)
 
-            elif field_id in _RANGE_FIELDS and value:
-                column = _RANGE_FIELDS[field_id]
+            elif field_id == "t1" and value:
                 if value.get("min") is not None:
-                    where_clauses.append(f"{column} >= %s")
-                    params.append(value["min"])
+                    conditions.append(MeasurementORM.t1 >= value["min"])
                 if value.get("max") is not None:
-                    where_clauses.append(f"{column} <= %s")
-                    params.append(value["max"])
+                    conditions.append(MeasurementORM.t1 <= value["max"])
 
-        where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
-        return where_sql
+            elif field_id == "t2" and value:
+                if value.get("min") is not None:
+                    conditions.append(MeasurementORM.t2 >= value["min"])
+                if value.get("max") is not None:
+                    conditions.append(MeasurementORM.t2 <= value["max"])
+
+            elif field_id == "voltage" and value:
+                if value.get("min") is not None:
+                    conditions.append(MeasurementORM.voltage >= value["min"])
+                if value.get("max") is not None:
+                    conditions.append(MeasurementORM.voltage <= value["max"])
+
+        return conditions
+

@@ -1,5 +1,5 @@
 from daq6510.scpi.commands import ScpiCommands
-from daq6510.scpi.parser import parse_channel_readings
+from daq6510.scpi.parser import parse_channel_readings, parse_idn
 from daq6510.transport.visa_connection import VisaConnection
 
 

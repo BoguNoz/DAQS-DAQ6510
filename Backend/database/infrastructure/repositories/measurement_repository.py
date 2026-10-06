@@ -7,14 +7,7 @@ class MeasurementRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def create(self, model: Measurement) -> None:
-        orm = MeasurementORM(
-            device_id=model.device_id,
-            time=model.time,
-            t1=model.t1,
-            t2=model.t2,
-            voltage=model.voltage,
-        )
+    def create(self, orm: MeasurementORM) -> None:
         self.session.add(orm)
         self.session.commit()
 
@@ -23,7 +16,7 @@ class MeasurementRepository:
         filters: list[dict],
         page_index: int,
         page_size: int,
-    ) -> tuple[list[Measurement], int]:
+    ) -> tuple[list[MeasurementORM], int]:
         stmt = select(MeasurementORM)
         count_stmt = select(func.count()).select_from(MeasurementORM)
 
@@ -43,7 +36,7 @@ class MeasurementRepository:
         rows = self.session.scalars(stmt).all()
 
         result = [
-            Measurement(
+            MeasurementORM(
                 id=row.id,
                 device_id=row.device_id,
                 time=row.time,

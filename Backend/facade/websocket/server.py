@@ -1,10 +1,10 @@
 import asyncio
 import websockets
 
-from experiment.factory import build_orchestrator
-from experiment.orchestrator import Orchestrator
-from websocket.connections import register, unregister, connected_clients, broadcast
-from websocket.handlers import handle_request
+from experiment.utils.factory import build_orchestrator
+from experiment.core.orchestrator import Orchestrator
+from facade.websocket.connections import register, unregister, broadcast
+from facade.websocket.handlers import handle_request
 
 class OrchestratorHolder:
     def __init__(self):

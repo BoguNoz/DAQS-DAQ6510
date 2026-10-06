@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Device:
-    id: int
+    hash: str
     name: str
     logo: str
     resource_address: str

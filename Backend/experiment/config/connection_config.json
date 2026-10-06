@@ -1,4 +1,5 @@
 {
     "use_simulator": true,
-    "resource_address": ""
+    "resource_address": "",
+    "device_hash": ""
 }

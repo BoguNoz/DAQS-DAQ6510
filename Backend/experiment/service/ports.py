@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class ConfigStore(Protocol):
+    def save_channel_map(self, channels: dict) -> None: ...
+    def save_connection_config(self, connection: dict) -> None: ...

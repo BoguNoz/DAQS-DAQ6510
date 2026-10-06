@@ -4,11 +4,11 @@ import time
 from daq6510.instrument import DAQ6510
 from daq6510.transport.exceptions import InstrumentError
 from experiment.config.config import ChannelRole
-from experiment.kalman import ScalarKalmanFilter
-from experiment.seebeck import calculate_seebeck_coefficient
-from experiment.stability import StabilityDetector
+from experiment.methods.kalman import ScalarKalmanFilter
+from experiment.methods.seebeck import calculate_seebeck_coefficient
+from experiment.methods.stability import StabilityDetector
 
-from experiment.state import SharedExperimentData, ExperimentState
+from experiment.core.state import SharedExperimentData, ExperimentState
 
 
 class Orchestrator:
@@ -16,6 +16,7 @@ class Orchestrator:
             self,
             daq: DAQ6510,
             channel_map: dict[str, ChannelRole],
+            device_hash: str,
             process_variance: float,
             measurement_variance: float,
             poll_interval_seconds: float = 1.0,

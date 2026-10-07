@@ -7,11 +7,13 @@ class MeasurementRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def create(self, orm: MeasurementORM) -> None:
+    def create(self, orm: MeasurementORM) -> int:
         self.session.add(orm)
         self.session.commit()
+        self.session.refresh(orm)
+        return orm.id
 
-    def list(
+    def get_all(
         self,
         filters: list[dict],
         page_index: int,
@@ -48,7 +50,7 @@ class MeasurementRepository:
         ]
         return result, total
 
-    def _build_conditions(self, filters: list[dict]) -> list:
+    def _build_conditions(self, filters: list[dict], ) -> list:
         conditions = []
 
         for f in filters:

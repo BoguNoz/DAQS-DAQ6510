@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from database.domain.models.device import Device
-from database.domain.models.measurement import Measurement
+from database.domain.models.measurement import Measurement, DeviceL
 from database.infrastructure.models.device import DeviceORM
 from database.infrastructure.models.measurement import MeasurementORM
 from database.infrastructure.repositories.device_repository import DeviceRepository
@@ -42,6 +42,50 @@ class DatabaseService:
         result = self._device_repository.delete(id_)
         return result
 
+    def add_new_measurement(self, measurement: Measurement) -> str:
+        orm = MeasurementORM(
+            device_id=self._hasher.decode(measurement.device.hash),
+            time=measurement.time,
+            t1=measurement.t1,
+            t2=measurement.t2,
+            voltage=measurement.voltage,
+        )
+        result = self._measurement_repository.create(orm)
+        return self._hasher.encode(result)
+
+    def list_measurements(
+            self,
+            filters: list[dict],
+            page_index: int,
+            page_size: int,
+    ) -> tuple[list[Measurement], int]:
+        if "device" in filters and filters["device"]:
+            filters["device"] = self._hasher.decode(filters["device"])
+
+        if page_size > 50:
+            page_size = 50
+
+        orms, total = self._measurement_repository.get_all(filters, page_index, page_size)
+
+        result = []
+
+        for orm in orms:
+            device = self.get_device(orm.device_id)
+
+            result.append(Measurement(
+                hash=self._hasher.encode(orm.id),
+                device=DeviceL(
+                    hash=device.hash,
+                    logo=device.logo,
+                    name=device.name,
+                ),
+                time=orm.time,
+                t1=orm.t1,
+                t2=orm.t2,
+                voltage=orm.voltage,
+            ))
+
+        return result, total
 
 
     def _device_to_model(self, orm: DeviceORM) -> Device:

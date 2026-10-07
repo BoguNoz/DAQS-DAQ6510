@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 @dataclass
-class Device:
+class DeviceL:
     hash: str
     name: str
     logo: str
@@ -10,7 +10,7 @@ class Device:
 @dataclass
 class Measurement:
     hash: str
-    device: Device
+    device: DeviceL
     time: datetime
     t1: float
     t2: float

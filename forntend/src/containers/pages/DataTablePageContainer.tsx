@@ -12,7 +12,7 @@ import {HeaderCheckBox, RowCheckBox} from "@/components/layout/data-table/CheckB
 import {en} from "@/text/en.ts";
 import UserAvatarCell from "@/components/layout/data-table/UserAvatarCell.tsx";
 import DeviceCell from "@/components/layout/data-table/DeviceCell.tsx";
-import type {LogoKey} from "@/models/device-model.ts";
+import type {LogoKey} from "@/models/device/device.ts";
 import DateCell from "@/components/layout/data-table/DateCell.tsx";
 import {useCallback, useEffect, useMemo, useState} from "react";
 

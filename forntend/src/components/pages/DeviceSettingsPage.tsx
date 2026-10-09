@@ -3,7 +3,7 @@ import { FieldError, FieldLabel } from "@/components/ui/field.tsx";
 import { en } from "@/text/en.ts";
 import {Link, Computer, CheckCircle2, CircleX, PlusCircle, Trash2, PencilLine, Undo2} from "lucide-react";
 import { Input } from "@/components/ui/input.tsx";
-import { LogoMap } from "@/models/logo-map.ts";
+import { LogoMap } from "@/models/device/logo-map.ts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card.tsx";
 import {Controller, type UseFormReturn, useFormState} from "react-hook-form";
 import * as z from "zod";

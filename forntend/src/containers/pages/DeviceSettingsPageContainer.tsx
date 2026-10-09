@@ -9,7 +9,7 @@ import DeviceSettingsPage from "@/components/pages/DeviceSettingsPage.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {roots} from "@/roots/root.tsx";
 import {deviceStorage} from "@/helpers/device-storage.ts";
-import type {DeviceModel} from "@/models/device-model.ts";
+import type {Device} from "@/models/device/device.ts";
 import {en} from "@/text/en.ts";
 
 
@@ -45,7 +45,7 @@ const DeviceSettingsPageContainer = observer(() => {
                 form.reset({
                     name: existingDevice.name,
                     logo: existingDevice.logo,
-                    resourceAddress: existingDevice.resourceAddress,
+                    resourceAddress: existingDevice.resource_address,
                     thermocouple_1_slot: existingDevice.thermocouple_1_slot || "",
                     thermocouple_1_channel: existingDevice.thermocouple_1_channel || "",
                     thermocouple_2_slot: existingDevice.thermocouple_2_slot || "",
@@ -70,10 +70,10 @@ const DeviceSettingsPageContainer = observer(() => {
     }, [deviceId, validVariant, form]);
 
     const onSubmit = useCallback((data: z.infer<typeof formSchema>) => {
-        const deviceData: DeviceModel = {
+        const deviceData: Device = {
             name: data.name,
-            logo: data.logo as DeviceModel["logo"],
-            resourceAddress: data.resourceAddress,
+            logo: data.logo as Device["logo"],
+            resource_address: data.resourceAddress,
             thermocouple_1_slot: data.thermocouple_1_slot,
             thermocouple_1_channel: data.thermocouple_1_channel,
             thermocouple_2_slot: data.thermocouple_2_slot,

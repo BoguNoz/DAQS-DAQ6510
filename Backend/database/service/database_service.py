@@ -28,13 +28,13 @@ class DatabaseService:
             return [self._device_to_model(o) for o in DeviceRepository(session).get_all()]
 
     def add_new_device(self, device: Device) -> str:
-        orm = self._device_to_orm(device)
+        orm = self._device_to_orm(device, is_new=True)
         with self._session_factory.begin() as session:
             created_id = DeviceRepository(session).create(orm)
         return self._hasher.encode(created_id)
 
     def update_device(self, device: Device) -> str:
-        orm = self._device_to_orm(device, is_new=False)
+        orm = self._device_to_orm(device)
         with self._session_factory.begin() as session:
             repo = DeviceRepository(session)
             updated_id = repo.update(orm)

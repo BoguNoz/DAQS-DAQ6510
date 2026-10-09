@@ -2,11 +2,11 @@
 
 import { Sidebar, SidebarHeader } from "@/components/ui/sidebar"
 import { observer } from "mobx-react-lite"
-import type { DeviceModel } from "@/models/device-model.ts"
+import type { Device } from "@/models/device/device.ts"
 import DeviceSwitcher from "@/components/layout/sidebar/DeviceSwitcher.tsx"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-    getDevices: () => DeviceModel[]
+    getDevices: () => Device[]
     deleteDevice: (resourceAddress: string) => void
     handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
 }

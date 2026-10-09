@@ -1,0 +1,1 @@
+export type ExperimentChannelMap = Record<string, unknown>;

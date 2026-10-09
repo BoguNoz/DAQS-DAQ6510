@@ -1,12 +1,12 @@
-import { LogoMap } from "@/models/logo-map.ts";
+import { LogoMap } from "@/models/device/logo-map.ts";
 
 export type LogoKey = keyof typeof LogoMap;
 
-export interface DeviceModel {
+export interface Device {
     hash: string;
     name: string;
-    logo: LogoKey;
-    resourceAddress: string;
+    logo: string;
+    resource_address: string;
     thermocouple_1_slot: string;
     thermocouple_1_channel: string;
     thermocouple_2_slot: string;
@@ -15,4 +15,4 @@ export interface DeviceModel {
     voltage_channel: string;
 }
 
-export type StoredDevice = DeviceModel;
+export type StoredDevice = Device;

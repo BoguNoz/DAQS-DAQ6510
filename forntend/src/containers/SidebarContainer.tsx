@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import Sidebar from "@/components/layout/sidebar/Sidebar.tsx";
-import type {DeviceModel} from "@/models/device-model.ts";
+import type {Device} from "@/models/device/device.ts";
 import * as React from "react";
 import {deviceStorage} from "@/helpers/device-storage.ts";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import {roots} from "@/roots/root.tsx";
 const SidebarContainer = observer(() => {
     const navigate = useNavigate();
 
-    const getDevices = React.useCallback((): DeviceModel[] => {
+    const getDevices = React.useCallback((): Device[] => {
         const stored = deviceStorage.get();
 
         if (stored.length > 0) {
@@ -19,11 +19,12 @@ const SidebarContainer = observer(() => {
         }
 
         // TODO Do Usunięcia 
-        const defaults: DeviceModel[] = [
+        const defaults: Device[] = [
             {
+                hash: "test",
                 name: "Acme Inc",
                 logo: "radio",
-                resourceAddress: "acme-inc",
+                resource_address: "acme-inc",
                 thermocouple_1_slot: "1",
                 thermocouple_1_channel: "101",
                 thermocouple_2_slot: "1",
@@ -32,9 +33,10 @@ const SidebarContainer = observer(() => {
                 voltage_channel: "101",
             },
             {
+                hash: "test",
                 name: "Acme Corp.",
                 logo: "router",
-                resourceAddress: "acme-corp",
+                resource_address: "acme-corp",
                 thermocouple_1_slot: "1",
                 thermocouple_1_channel: "201",
                 thermocouple_2_slot: "1",
@@ -43,9 +45,10 @@ const SidebarContainer = observer(() => {
                 voltage_channel: "201",
             },
             {
+                hash: "test",
                 name: "Evil Corp.",
                 logo: "cpu",
-                resourceAddress: "evil-corp",
+                resource_address: "evil-corp",
                 thermocouple_1_slot: "1",
                 thermocouple_1_channel: "301",
                 thermocouple_2_slot: "1",

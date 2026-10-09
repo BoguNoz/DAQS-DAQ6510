@@ -1,9 +1,9 @@
-import type {DeviceModel, StoredDevice} from "@/models/device-model";
+import type {Device, StoredDevice} from "@/models/device/device.ts";
 
 const STORAGE_KEY = "devices";
 
 export const deviceStorage = {
-    get(): DeviceModel[] {
+    get(): Device[] {
         const value = localStorage.getItem(STORAGE_KEY);
 
         if (!value) {
@@ -18,14 +18,14 @@ export const deviceStorage = {
         }
     },
 
-    getByAddress(resourceAddress: string): DeviceModel | undefined {
+    getByAddress(resourceAddress: string): Device | undefined {
         const devices = this.get();
-        return devices.find(device => device.resourceAddress === resourceAddress);
+        return devices.find(device => device.resource_address === resourceAddress);
     },
 
-    save(device: DeviceModel, originalAddress?: string) {
+    save(device: Device, originalAddress?: string) {
         const devices = this.get();
-        const targetAddress = originalAddress || device.resourceAddress;
+        const targetAddress = originalAddress || device.resource_address;
         const index = devices.findIndex(d => d.resourceAddress === targetAddress);
 
         if (index >= 0) {
@@ -40,12 +40,12 @@ export const deviceStorage = {
     remove(resourceAddress: string) {
         const devices = this.get();
         const filteredDevices = devices.filter(
-            device => device.resourceAddress !== resourceAddress
+            device => device.resource_address !== resourceAddress
         );
         this.set(filteredDevices);
     },
 
-    set(devices: DeviceModel[]) {
+    set(devices: Device[]) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(devices));
     },
 

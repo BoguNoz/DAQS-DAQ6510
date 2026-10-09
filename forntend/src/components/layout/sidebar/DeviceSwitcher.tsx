@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import type {DeviceModel} from "@/models/device-model.ts";
+import type {Device} from "@/models/device/device.ts";
 import * as React from "react";
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem} from "@/components/ui/sidebar.tsx";
 import {
@@ -23,12 +23,12 @@ import {
     ContextMenuTrigger
 } from "@/components/ui/context-menu.tsx";
 import { Button } from "@/components/ui/button";
-import {LogoMap} from "@/models/logo-map.ts";
+import {LogoMap} from "@/models/device/logo-map.ts";
 
 
 
 interface DeviceSwitcherProps {
-    getDevices: () => DeviceModel[];
+    getDevices: () => Device[];
     deleteDevice: (resourceAddress: string) => void;
     getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
     handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
@@ -37,9 +37,9 @@ interface DeviceSwitcherProps {
 const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
     const {getDevices, deleteDevice, getDeviceConnectionStatus, handleNavigateToDevice} = props;
 
-    const [devices, setDevices] = React.useState<DeviceModel[]>(() => getDevices());
+    const [devices, setDevices] = React.useState<Device[]>(() => getDevices());
 
-    const [activeDevice, setActiveDevice] = React.useState<DeviceModel>(
+    const [activeDevice, setActiveDevice] = React.useState<Device>(
         devices[0]
     );
 
@@ -49,7 +49,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
         const updatedDevices = getDevices();
         setDevices(updatedDevices);
 
-        if (activeDevice?.resourceAddress === resourceAddress) {
+        if (activeDevice?.resource_address === resourceAddress) {
             setActiveDevice(updatedDevices[0]);
         }
     };
@@ -82,7 +82,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
 
 const MenuTrigger = observer((
     props: {
-        device: DeviceModel
+        device: Device
         getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
     }
 ) => {
@@ -112,7 +112,7 @@ const MenuTrigger = observer((
 
 const ConnectionState = observer((
     props: {
-        device: DeviceModel
+        device: Device
         getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
     }
 ) => {
@@ -134,8 +134,8 @@ const ConnectionState = observer((
 
 const MenuContent = observer((
     props: {
-        devices: DeviceModel[],
-        setActiveDevice:React.Dispatch<React.SetStateAction<DeviceModel>>
+        devices: Device[],
+        setActiveDevice:React.Dispatch<React.SetStateAction<Device>>
         deleteDevice: (resourceAddress: string) => void;
         handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
     }
@@ -181,8 +181,8 @@ const MenuContent = observer((
 const MenuItem = observer((
     props: {
         index: number;
-        device: DeviceModel,
-        setActiveDevice: React.Dispatch<React.SetStateAction<DeviceModel>>}
+        device: Device,
+        setActiveDevice: React.Dispatch<React.SetStateAction<Device>>}
 ) => {
     const {index, device, setActiveDevice} = props;
 
@@ -205,8 +205,8 @@ const MenuItem = observer((
 
 const ItemContextMenu = observer((
     props: {
-        device: DeviceModel,
-        setActiveDevice: React.Dispatch<React.SetStateAction<DeviceModel>>
+        device: Device,
+        setActiveDevice: React.Dispatch<React.SetStateAction<Device>>
         deleteDevice: (resourceAddress: string) => void;
         handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
     }
@@ -220,16 +220,16 @@ const ItemContextMenu = observer((
                     {en.deviceSwitcher.contextMenu.select}
                     <ContextMenuShortcut>⌘[</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => handleNavigateToDevice("edit", device.name, device.resourceAddress)}>
+                <ContextMenuItem onClick={() => handleNavigateToDevice("edit", device.name, device.resource_address)}>
                     {en.deviceSwitcher.contextMenu.edit}
                     <ContextMenuShortcut>⌘]</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => handleNavigateToDevice("inspect", device.name, device.resourceAddress)}>
+                <ContextMenuItem onClick={() => handleNavigateToDevice("inspect", device.name, device.resource_address)}>
                     {en.deviceSwitcher.contextMenu.info}
                     <ContextMenuShortcut>⌘i</ContextMenuShortcut>
                 </ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuGroup onClick={() => deleteDevice(device.resourceAddress)}>
+                <ContextMenuGroup onClick={() => deleteDevice(device.resource_address)}>
                     <ContextMenuItem variant="destructive">
                         <TrashIcon />
                         {en.deviceSwitcher.contextMenu.delete}

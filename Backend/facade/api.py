@@ -3,7 +3,7 @@ import asyncio
 from container import Services
 from facade.websocket.broadcaster import StateBroadcaster
 from facade.websocket.connections import ConnectionRegistry
-from facade.websocket.handlers.database_handlers import DatabaseHandlers
+from facade.websocket.handlers.database import DatabaseHandlers
 from facade.websocket.handlers.experiment import ExperimentHandlers
 from facade.websocket.router import Router
 from facade.websocket.server import WebSocketServer

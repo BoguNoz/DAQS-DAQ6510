@@ -10,12 +10,12 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb.tsx"
-import type { DeviceModel } from "@/models/device-model.ts"
+import type { Device } from "@/models/device/device.ts"
 import { Outlet, useMatches } from "react-router-dom"
 import { Fragment } from "react"
 
 interface SidebarProps {
-    getDevices: () => DeviceModel[]
+    getDevices: () => Device[]
     deleteDevice: (resourceAddress: string) => void
     handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceId?: string) => void
 }

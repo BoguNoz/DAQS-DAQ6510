@@ -1,0 +1,1 @@
+export type ExperimentConnectionConfig = Record<string, unknown>;

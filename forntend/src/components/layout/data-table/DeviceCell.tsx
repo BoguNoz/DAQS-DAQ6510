@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
 import {Marker, MarkerContent, MarkerIcon} from "@/components/ui/marker.tsx";
-import {LogoMap} from "@/models/logo-map.ts";
+import {LogoMap} from "@/models/device/logo-map.ts";
 import {GalleryVerticalEnd} from "lucide-react";
-import type {LogoKey} from "@/models/device-model.ts";
+import type {LogoKey} from "@/models/device/device.ts";
 
 interface DeviceCellProps {
     name: string

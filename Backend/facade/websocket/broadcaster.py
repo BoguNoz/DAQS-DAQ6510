@@ -15,8 +15,7 @@ class StateBroadcaster:
 
     async def run(self) -> None:
         while True:
-            try:
-                event = Event("state", self._service.get_state())
-                self._registry.broadcast(event.to_json())
-            except Exception:
-                await asyncio.sleep(self._interval)
+            event = Event(ExperimentActions.STATUS.value, self._service.get_state())
+            self._registry.broadcast(event.to_json())
+
+            await asyncio.sleep(self._interval)

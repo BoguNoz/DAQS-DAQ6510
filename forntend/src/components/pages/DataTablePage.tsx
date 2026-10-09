@@ -447,9 +447,9 @@ const DataTableFilters = observer((
                             <SelectItem value="__all__">
                                 {en.dataTablePage.filtering.allDevices}
                             </SelectItem>
-                            {deviceOptions.map((name) => (
-                                <SelectItem key={name} value={name}>
-                                    {name}
+                            {deviceOptions.map((hash) => (
+                                <SelectItem key={hash} value={hash}>
+                                    {hash}
                                 </SelectItem>
                             ))}
                         </SelectContent>

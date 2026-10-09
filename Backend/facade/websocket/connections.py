@@ -1,19 +1,16 @@
-import asyncio
-import json
+import websockets
 
-connected_clients: set = set()
 
-def register(websocket) -> None:
-    connected_clients.add(websocket)
+class ConnectionRegistry:
+    def __init__(self) -> None:
+        self._clients: set = set()
 
-def unregister(websocket) -> None:
-    connected_clients.discard(websocket)
+    def register(self, websocket) -> None:
+        self._clients.add(websocket)
 
-async def broadcast(payload: dict) -> None:
-    if not connected_clients:
-        return
-    message = json.dumps(payload)
-    await asyncio.gather(
-        *(client.send(message) for client in connected_clients),
-        return_exceptions=True,
-    )
+    def unregister(self, websocket) -> None:
+        self._clients.discard(websocket)
+
+    def broadcast(self, message: str) -> None:
+        if self._clients:
+            websockets.broadcast(self._clients, message)

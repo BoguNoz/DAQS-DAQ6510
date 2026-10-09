@@ -36,6 +36,7 @@ export const dataTableSchema = z.object({
     }),*/
     time: z.date(),
     device: z.object({
+        hash: z.string(),
         name: z.string(),
         logo: z.string(),
     }),

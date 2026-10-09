@@ -1,41 +1,31 @@
 import asyncio
+
 import websockets
+from websockets import ConnectionClosed
 
-from experiment.utils.factory import build_orchestrator
-from experiment.core.orchestrator import Orchestrator
-from facade.websocket.connections import register, unregister, broadcast
-from facade.websocket.handlers import handle_request
+from facade.websocket.connections import ConnectionRegistry
+from facade.websocket.router import Router
 
-class OrchestratorHolder:
-    def __init__(self):
-        self.current: Orchestrator = build_orchestrator()
 
-    def rebuild(self) -> None:
-        old = self.current
-        old.disconnect_instrument()
-        self.current = build_orchestrator()
+class WebSocketServer:
+    def __init__(self, router: Router, registry: ConnectionRegistry,
+                 host: str = "localhost", port: int = 12345) -> None:
+        self._router = router
+        self._registry = registry
+        self._host = host
+        self._port = port
 
-holder = OrchestratorHolder()
+    async def serve_forever(self) -> None:
+        async with websockets.serve(self._handle, self._host, self._port):
+            await asyncio.Future()  # czekaj bez końca, aż ktoś anuluje
 
-async def handle(websocket):
-    register(websocket)
-    try:
-        async for message in websocket:
-            await handle_request(websocket, message, holder)
-    except websockets.exceptions.ConnectionClosed:
-        pass
-    finally:
-        unregister(websocket)
-
-async def broadcast_loop(interval: float = 1.0) -> None:
-    while True:
-        state = holder.current.get_current_state()
-        await broadcast(state)
-        await asyncio.sleep(interval)
-
-async def main():
-    server = await websockets.serve(handle, "localhost", 12345)
-    await asyncio.gather(server.wait_closed(), broadcast_loop())
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    async def _handle(self, websocket) -> None:
+        self._registry.register(websocket)
+        try:
+            async for raw in websocket:
+                response = await self._router.dispatch(raw)
+                await websocket.send(response.to_json())
+        except ConnectionClosed:
+            pass
+        finally:
+            self._registry.unregister(websocket)

@@ -18,11 +18,11 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 
 
 const devices = [
-    { name: "DAQ6510-A", logo: "cpu" },
-    { name: "DAQ6510-B", logo: "gauge" },
-    { name: "Modbus-Gateway-01", logo: "smartphone" },
-    { name: "Modbus-Gateway-02", logo: "tv" },
-    { name: "Sensor-Hub-X1", logo: "battery" },
+    { hash: "test-1", name: "DAQ6510-A", logo: "cpu" },
+    { hash: "test-2", name: "DAQ6510-B", logo: "gauge" },
+    { hash: "test-3", name: "Modbus-Gateway-01", logo: "smartphone" },
+    { hash: "test-4", name: "Modbus-Gateway-02", logo: "tv" },
+    { hash: "test-5", name: "Sensor-Hub-X1", logo: "battery" },
 ];
 
 function randomFloat(min: number, max: number, decimals = 2) {
@@ -32,7 +32,7 @@ function randomFloat(min: number, max: number, decimals = 2) {
 export const mockDataTable: Array<{
     id: number;
     time: Date;
-    device: { name: string; logo: string };
+    device: { hash: string, name: string; logo: string };
     t1: number;
     t2: number;
     voltage: number;
@@ -69,7 +69,7 @@ const DataTablePageContainer = observer(() => {
 
         // TODO Trzeba dodać metode do data stora
         mockDataTable.forEach((row) => {
-           uniqueDevices.push(row.device.name)
+           uniqueDevices.push(row.device.hash)
         });
 
         return uniqueDevices;
@@ -87,7 +87,7 @@ const DataTablePageContainer = observer(() => {
 
             columnFilters.forEach((filter) => {
                 if (filter.id === dataTableFields.device && filter.value) {
-                    filtered = filtered.filter((row) => row.device.name === filter.value);
+                    filtered = filtered.filter((row) => row.device.hash === filter.value);
                 }
                 if (filter.id === dataTableFields.t1 && filter.value) {
                     const { min, max } = filter.value as { min?: number; max?: number };

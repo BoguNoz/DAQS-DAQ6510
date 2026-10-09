@@ -21,21 +21,21 @@ class ExperimentService:
             self._ensure_not_running_locked()
             self._release_current_locked()
 
-        orch = None
-        try:
-            orch = self._factory()
-            orch.start()
-        except InstrumentError as e:
-            self._safe_disconnect(orch)
-            raise InstrumentUnavailableError(str(e)) from e
-        except KeyError as e:
-            self._safe_disconnect(orch)
-            raise InvalidConfigError()
-        except Exception:
-            self._safe_disconnect(orch)
-            raise
+            orch = None
+            try:
+                orch = self._factory()
+                orch.start()
+            except InstrumentError as e:
+                self._safe_disconnect(orch)
+                raise InstrumentUnavailableError(str(e)) from e
+            except KeyError as e:
+                self._safe_disconnect(orch)
+                raise InvalidConfigError()
+            except Exception:
+                self._safe_disconnect(orch)
+                raise
 
-        self._orchestrator = orch
+            self._orchestrator = orch
 
     def stop(self):
         with self._lock:
@@ -56,13 +56,26 @@ class ExperimentService:
             self._ensure_not_running_locked()
             self._config_store.save_connection_config(connection)
 
+    def get_history(self) -> dict:
+        orch = self._orchestrator
+        return SharedExperimentData().full_history() if orch is None else orch.get_full_history()
+
+    def is_running(self) -> bool:
+        orch = self._orchestrator
+        return orch is not None and orch.is_running()
+
+    def is_connected(self) -> bool:
+        orch = self._orchestrator
+        return orch is not None and orch.is_connected()
+
+    def get_state(self) -> dict:
+        orch = self._orchestrator
+        return self._idle_state() if orch is None else orch.get_current_state()
+
     def _idle_state(self) -> dict:
         state = SharedExperimentData().snapshot()
         state["state"] = "IDLE"
         return state
-
-    def _empty_history(self) -> dict:
-        return SharedExperimentData().full_history()
 
     def _ensure_not_running_locked(self) -> None:
         orch = self._orchestrator

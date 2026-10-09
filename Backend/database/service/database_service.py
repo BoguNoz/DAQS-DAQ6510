@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from database.domain.models.device import Device
 from database.domain.models.measurement import Measurement, DeviceL
@@ -13,34 +13,37 @@ from database.utils.hasher import Hasher
 
 class DatabaseService:
 
-    def __init__(self, session: Session):
-        self._session = session
-        self._device_repository = DeviceRepository(session)
-        self._measurement_repository = MeasurementRepository(session)
+    def __init__(self, session_factory: sessionmaker[Session]):
+        self._session_factory = session_factory
         self._hasher = Hasher()
 
     def get_device(self, device_hash: str) -> Device:
         id_ = self._hasher.decode(device_hash)
-        result = self._device_repository.get_by_id(id_)
-        return self._device_to_model(result)
+        with self._session_factory() as session:
+            orm = DeviceRepository(session).get_by_id(id_)
+            return self._device_to_model(orm)
 
     def get_all_devices(self) -> List[Device]:
-        result = self._device_repository.get_all()
-        return [self._device_to_model(device) for device in result]
+        with self._session_factory() as session:
+            return [self._device_to_model(o) for o in DeviceRepository(session).get_all()]
 
     def add_new_device(self, device: Device) -> str:
-        orm = self._device_to_orm(device, is_new=True)
-        created_id = self._device_repository.create(orm)
+        orm = self._device_to_orm(device)
+        with self._session_factory.begin() as session:
+            created_id = DeviceRepository(session).create(orm)
         return self._hasher.encode(created_id)
 
     def update_device(self, device: Device) -> str:
         orm = self._device_to_orm(device, is_new=False)
-        updated_id = self._device_repository.update(orm)
+        with self._session_factory.begin() as session:
+            repo = DeviceRepository(session)
+            updated_id = repo.update(orm)
         return self._hasher.encode(updated_id)
+
     def delete_device(self, device_hash: str) -> bool:
         id_ = self._hasher.decode(device_hash)
-        result = self._device_repository.delete(id_)
-        return result
+        with self._session_factory.begin() as session:
+            DeviceRepository(session).delete(id_)
 
     def add_new_measurement(self, measurement: Measurement) -> str:
         orm = MeasurementORM(
@@ -50,8 +53,9 @@ class DatabaseService:
             t2=measurement.t2,
             voltage=measurement.voltage,
         )
-        result = self._measurement_repository.create(orm)
-        return self._hasher.encode(result)
+        with self._session_factory.begin() as session:
+            created_id = MeasurementRepository(session).create(orm)
+        return self._hasher.encode(created_id)
 
     def list_measurements(
             self,
@@ -59,34 +63,28 @@ class DatabaseService:
             page_index: int,
             page_size: int,
     ) -> tuple[list[Measurement], int]:
-        if "device" in filters and filters["device"]:
-            filters["device"] = self._hasher.decode(filters["device"])
 
-        if page_size > 50:
-            page_size = 50
+        page_index = max(0, page_index)
+        page_size = min(max(1, page_size), 50)
+        decoded_filters = self._decode_filters(filters)
 
-        orms, total = self._measurement_repository.get_all(filters, page_index, page_size)
+        with self._session_factory() as session:
+            orms, total = MeasurementRepository(session).get_all(decoded_filters, page_index, page_size)
 
-        result = []
+            device_ids = {orm.device_id for orm in orms}
+            devices = DeviceRepository(session).get_all_by_id(device_ids)
 
-        for orm in orms:
-            device = self.get_device(orm.device_id)
-
-            result.append(Measurement(
-                hash=self._hasher.encode(orm.id),
-                device=DeviceL(
-                    hash=device.hash,
-                    logo=device.logo,
-                    name=device.name,
-                ),
-                time=orm.time,
-                t1=orm.t1,
-                t2=orm.t2,
-                voltage=orm.voltage,
-            ))
+            result = [self._measurement_to_model(orm, devices[orm.device_id]) for orm in orms]
 
         return result, total
 
+    def _decode_filters(self, filters: list[dict]) -> list[dict]:
+        decoded = []
+        for f in filters:
+            if f.get("id") == "device" and f.get("value"):
+                f = {**f, "value": self._hasher.decode(f["value"])}  # NOWY słownik, oryginał nietknięty
+            decoded.append(f)
+        return decoded
 
     def _device_to_model(self, orm: DeviceORM) -> Device:
         return Device(
@@ -119,6 +117,20 @@ class DatabaseService:
             orm.id = self._hasher.decode(device.hash)
 
         return orm
+
+    def _measurement_to_model(self, orm: MeasurementORM, device_orm: DeviceORM) -> Measurement:
+        return Measurement(
+            hash=self._hasher.encode(orm.id),
+            device=DeviceL(
+                hash=self._hasher.encode(device_orm.id),
+                logo=device_orm.logo,
+                name=device_orm.name,
+            ),
+            time=orm.time,
+            t1=orm.t1,
+            t2=orm.t2,
+            voltage=orm.voltage,
+        )
 
 
 

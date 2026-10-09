@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, Sequence
 from database.infrastructure.models.device import DeviceORM
 
 
@@ -15,11 +15,11 @@ class DeviceRepository:
             return None
         return orm
 
-    def get_all_by_id(self, ids: List[int]) -> List[DeviceORM]:
+    def get_all_by_id(self, ids: set[int]) -> Sequence[DeviceORM]:
         stmt = select(DeviceORM).where(DeviceORM.id.in_(ids))
         return self.session.scalars(stmt).all()
 
-    def get_all(self) -> list[DeviceORM]:
+    def get_all(self) -> Sequence[DeviceORM]:
         stmt = select(DeviceORM).order_by(DeviceORM.id)
         rows = self.session.scalars(stmt).all()
         return rows

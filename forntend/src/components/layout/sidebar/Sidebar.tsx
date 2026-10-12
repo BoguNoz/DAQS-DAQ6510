@@ -15,21 +15,25 @@ import { Outlet, useMatches } from "react-router-dom"
 import { Fragment } from "react"
 
 interface SidebarProps {
-    getDevices: () => Device[]
-    deleteDevice: (resourceAddress: string) => void
-    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceId?: string) => void
+    setSelectedDevice: (device: Device) => void
+    getDevices: () => Promise<Device[]>
+    deleteDevice: (hash: string) => Promise<void>
+    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", hash?: string) => void
+    getDeviceConnectionStatus: () => boolean | null;
 }
 
 const Sidebar = observer((props: SidebarProps) => {
-    const { getDevices, deleteDevice, handleNavigateToDevice } = props
+    const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus, setSelectedDevice } = props
 
     return (
         <SidebarProvider>
             <AppSidebar
                 variant="inset"
+                setSelectedDevice={setSelectedDevice}
                 getDevices={getDevices}
                 deleteDevice={deleteDevice}
                 handleNavigateToDevice={handleNavigateToDevice}
+                getDeviceConnectionStatus={getDeviceConnectionStatus}
             />
             <Inset />
         </SidebarProvider>

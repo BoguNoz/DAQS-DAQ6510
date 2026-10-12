@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import type {Device} from "@/models/device/device.ts";
+import type {Device, LogoKey} from "@/models/device/device.ts";
 import * as React from "react";
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem} from "@/components/ui/sidebar.tsx";
 import {
@@ -9,7 +9,7 @@ import {
     DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import {ChevronsUpDown, GalleryVerticalEnd, Plus, TrashIcon} from "lucide-react";
+import {Cable, ChevronsUpDown, GalleryVerticalEnd, GlobeOff, Plus, TrashIcon} from "lucide-react";
 import {en} from "@/text/en.ts";
 import {Marker, MarkerContent, MarkerIcon} from "@/components/ui/marker.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -24,40 +24,55 @@ import {
 } from "@/components/ui/context-menu.tsx";
 import { Button } from "@/components/ui/button";
 import {LogoMap} from "@/models/device/logo-map.ts";
+import {useEffect} from "react";
 
 
 
 interface DeviceSwitcherProps {
-    getDevices: () => Device[];
-    deleteDevice: (resourceAddress: string) => void;
-    getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
-    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
+    setSelectedDevice: (device: Device) => void
+    getDevices: () => Promise<Device[]>;
+    deleteDevice: (hash: string) => Promise<void>;
+    getDeviceConnectionStatus: () => boolean | null;
+    handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, hash?: string) => void
 }
 
 const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
-    const {getDevices, deleteDevice, getDeviceConnectionStatus, handleNavigateToDevice} = props;
+    const {getDevices, deleteDevice, getDeviceConnectionStatus, handleNavigateToDevice, setSelectedDevice} = props;
 
-    const [devices, setDevices] = React.useState<Device[]>(() => getDevices());
-
+    const [devices, setDevices] = React.useState<Device[]>([]);
     const [activeDevice, setActiveDevice] = React.useState<Device>(
         devices[0]
     );
+    const [reloadKey, setReloadKey] = React.useState(0);
 
-    const handleDeleteDevice = (resourceAddress: string) => {
-        deleteDevice(resourceAddress);
+    const handleSetSelectedDevice = (device: Device) => {
+        setSelectedDevice(device);
+        setActiveDevice(device);
+    }
 
-        const updatedDevices = getDevices();
-        setDevices(updatedDevices);
+    useEffect(() => {
+        let cancelled = false;
 
-        if (activeDevice?.resource_address === resourceAddress) {
-            setActiveDevice(updatedDevices[0]);
-        }
+        const load = async () => {
+            const loaded = await getDevices();
+            if (cancelled) return;
+
+            setDevices(loaded);
+            handleSetSelectedDevice(loaded[0] ?? null);
+
+        };
+
+        void load();
+
+        return () => { cancelled = true; };
+    }, [getDevices, reloadKey]);
+
+    const handleDeleteDevice = async (hash: string) => {
+        await deleteDevice(hash);
+        setReloadKey((key) => key + 1);
     };
 
 
-    if (!activeDevice) {
-        return null;
-    }
 
     return (
         <SidebarMenu className="border rounded-md">
@@ -69,7 +84,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
                     />
                     <MenuContent
                         devices={devices}
-                        setActiveDevice={setActiveDevice}
+                        setSelectedDevice={handleSetSelectedDevice}
                         deleteDevice={handleDeleteDevice}
                         handleNavigateToDevice={handleNavigateToDevice}
                     />
@@ -82,13 +97,13 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
 
 const MenuTrigger = observer((
     props: {
-        device: Device
-        getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
+        device: Device | null;
+        getDeviceConnectionStatus: () => boolean | null;
     }
 ) => {
     const {device} = props;
 
-    const IconComponent = LogoMap[device.logo] || GalleryVerticalEnd;
+    const IconComponent = LogoMap[device?.logo as LogoKey] || GalleryVerticalEnd;
 
     return (
         <DropdownMenuTrigger asChild>
@@ -112,21 +127,32 @@ const MenuTrigger = observer((
 
 const ConnectionState = observer((
     props: {
-        device: Device
-        getDeviceConnectionStatus: (resourceAddress: string) => boolean | null;
+        device: Device | null;
+        getDeviceConnectionStatus: () => boolean | null;
     }
 ) => {
-    const {device} = props;
-    const [deviceState, setDeviceState] = React.useState(null);
+    const {device, getDeviceConnectionStatus} = props;
+    const status = getDeviceConnectionStatus();
 
-   // TODO STAE MENAGEMENT
-    
+    const getIcon = (status: boolean | null) => {
+        if (status === null) {
+            return <Spinner/>;
+        }
+        if (status) {
+            return <Cable className="text-green-300"/>;
+        }
+
+        return <GlobeOff className="text-red-300"/>;
+    }
+
     return (
         <Marker role="status">
             <MarkerIcon>
-                <Spinner />
+                {getIcon(status)}
             </MarkerIcon>
-            <MarkerContent className="shimmer">{device.name}</MarkerContent>
+            <MarkerContent className={status === null ? "shimmer" : undefined}>
+                {device?.name}
+            </MarkerContent>
         </Marker>
     );
 });
@@ -135,13 +161,13 @@ const ConnectionState = observer((
 const MenuContent = observer((
     props: {
         devices: Device[],
-        setActiveDevice:React.Dispatch<React.SetStateAction<Device>>
-        deleteDevice: (resourceAddress: string) => void;
-        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
+        setSelectedDevice: (device: Device) => void
+        deleteDevice: (hash: string) => void;
+        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, hash?: string) => void
     }
 ) => {
 
-    const {devices, setActiveDevice, deleteDevice, handleNavigateToDevice} = props;
+    const {devices, setSelectedDevice, deleteDevice, handleNavigateToDevice} = props;
 
     return (
         <DropdownMenuContent
@@ -159,13 +185,13 @@ const MenuContent = observer((
                             key={index}
                             index={index}
                             device={device}
-                            setActiveDevice={setActiveDevice}
+                            setSelectedDevice={setSelectedDevice}
                         />
                     </ContextMenuTrigger>
                     <ItemContextMenu
                         device={device}
                         deleteDevice={deleteDevice}
-                        setActiveDevice={setActiveDevice}
+                        setSelectedDevice={setSelectedDevice}
                         handleNavigateToDevice={handleNavigateToDevice}
                     />
                 </ContextMenu>
@@ -182,16 +208,17 @@ const MenuItem = observer((
     props: {
         index: number;
         device: Device,
-        setActiveDevice: React.Dispatch<React.SetStateAction<Device>>}
+        setSelectedDevice: (device: Device) => void;
+    }
 ) => {
-    const {index, device, setActiveDevice} = props;
+    const {index, device, setSelectedDevice} = props;
 
-    const IconComponent = LogoMap[device.logo] || GalleryVerticalEnd;
+    const IconComponent = LogoMap[device?.logo as LogoKey] || GalleryVerticalEnd;
 
     return (
         <DropdownMenuItem
             key={device.name}
-            onClick={() => setActiveDevice(device)}
+            onClick={() => setSelectedDevice(device)}
             className="gap-2 p-2"
         >
             <div className="flex size-6 items-center justify-center rounded-md border">
@@ -206,30 +233,31 @@ const MenuItem = observer((
 const ItemContextMenu = observer((
     props: {
         device: Device,
-        setActiveDevice: React.Dispatch<React.SetStateAction<Device>>
-        deleteDevice: (resourceAddress: string) => void;
-        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => void
+        setSelectedDevice: (device: Device) => void
+        deleteDevice: (hash: string) => void;
+        handleNavigateToDevice: (variant: "inspect" | "edit" | "add", deviceName?: string, hash?: string) => void
     }
 ) => {
-    const {device, setActiveDevice, deleteDevice, handleNavigateToDevice} = props;
+    const {device, setSelectedDevice, deleteDevice, handleNavigateToDevice} = props;
+
 
     return (
         <ContextMenuContent className="w-48">
             <ContextMenuGroup>
-                <ContextMenuItem onClick={() => setActiveDevice(device)}>
+                <ContextMenuItem onClick={() => setSelectedDevice(device)}>
                     {en.deviceSwitcher.contextMenu.select}
                     <ContextMenuShortcut>⌘[</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => handleNavigateToDevice("edit", device.name, device.resource_address)}>
+                <ContextMenuItem onClick={() => handleNavigateToDevice("edit", device.name, device.hash)}>
                     {en.deviceSwitcher.contextMenu.edit}
                     <ContextMenuShortcut>⌘]</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => handleNavigateToDevice("inspect", device.name, device.resource_address)}>
+                <ContextMenuItem onClick={() => handleNavigateToDevice("inspect", device.name, device.hash)}>
                     {en.deviceSwitcher.contextMenu.info}
                     <ContextMenuShortcut>⌘i</ContextMenuShortcut>
                 </ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuGroup onClick={() => deleteDevice(device.resource_address)}>
+                <ContextMenuGroup onClick={() => deleteDevice(device.hash)}>
                     <ContextMenuItem variant="destructive">
                         <TrashIcon />
                         {en.deviceSwitcher.contextMenu.delete}

@@ -2,23 +2,32 @@ import {observer} from "mobx-react-lite";
 import Sidebar from "@/components/layout/sidebar/Sidebar.tsx";
 import type {Device} from "@/models/device/device.ts";
 import * as React from "react";
-import {deviceStorage} from "@/helpers/device-storage.ts";
 import { useNavigate } from "react-router-dom";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {roots} from "@/roots/root.tsx";
+import type {DataStoreInterface} from "@/stores/data-store.ts";
+import {toast} from "sonner";
+import {en} from "@/text/en.ts";
 
 
-const SidebarContainer = observer(() => {
+interface SidebarContainerProps {
+    dataStore: DataStoreInterface;
+}
+
+const SidebarContainer = observer((props: SidebarContainerProps) => {
+    const { dataStore } = props;
+
     const navigate = useNavigate();
 
-    const getDevices = React.useCallback((): Device[] => {
-        const stored = deviceStorage.get();
+    useEffect(() => {
+        return dataStore.startPollingDeviceStatus();
+    }, [dataStore]);
 
-        if (stored.length > 0) {
-            return stored;
-        }
+    const getDevices = React.useCallback(async (): Promise<Device[]>  => {
+        //const stored =  await dataStore.getAllDevices()
 
-        // TODO Do Usunięcia 
+
+        // TODO Do usunięcia
         const defaults: Device[] = [
             {
                 hash: "test",
@@ -58,14 +67,20 @@ const SidebarContainer = observer(() => {
             },
         ];
 
-        deviceStorage.set(defaults);
-
         return defaults;
-    }, []);
+    }, [dataStore]);
 
-    const deleteDevice = React.useCallback((resourceAddress: string) => {
-        deviceStorage.remove(resourceAddress);
-    }, []);
+    const setSelectedDevice = useCallback((device: Device) => {
+        dataStore.setDevice(device);
+    }, [dataStore]);
+
+    const deleteDevice = useCallback(async (hash: string) => {
+        try {
+            await dataStore.deleteDevice(hash);
+        } catch {
+            toast.error(en.toast.deviceDeleteFailed);
+        }
+    }, [dataStore]);
 
     const handleNavigateToDevice = useCallback((variant: "inspect" | "edit" | "add", deviceName?: string, deviceId?: string) => {
         if (variant === "add") {
@@ -78,9 +93,11 @@ const SidebarContainer = observer(() => {
 
     return (
         <Sidebar
+            setSelectedDevice={setSelectedDevice}
             getDevices={getDevices}
             deleteDevice={deleteDevice}
             handleNavigateToDevice={handleNavigateToDevice}
+            getDeviceConnectionStatus={dataStore.getStatus}
         />
     );
 });

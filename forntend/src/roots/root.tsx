@@ -5,6 +5,7 @@ import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageContainer.tsx";
 import DataTablePageContainer from "@/containers/pages/DataTablePageContainer.tsx";
 import DashboardPageContainer from "@/containers/pages/DashboardPageContainer.tsx";
+import {dataStore} from "@/stores/data-store.ts";
 
 export const roots = {
     dashboard: "dashboard",
@@ -15,7 +16,7 @@ export const roots = {
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <SidebarContainer />,
+        element: <SidebarContainer dataStore={dataStore}/>,
         handle: { crumb: () => en.crumbs.root },
         children: [
             {

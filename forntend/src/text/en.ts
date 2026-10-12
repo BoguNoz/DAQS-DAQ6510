@@ -77,5 +77,6 @@ export const en = {
         deviceAdd: "Device added successfully",
         deviceUpdate: "Device updated",
         deviceDelete: "Device deleted",
+        deviceDeleteFailed: "Device can not be deleted.",
     },
 };

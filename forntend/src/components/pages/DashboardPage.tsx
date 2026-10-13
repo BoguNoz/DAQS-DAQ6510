@@ -43,7 +43,6 @@ const DashboardPage = observer((props: DashboardPageProps) => {
                         unit="V"
                         isStable={voltage.isStable}
                         data={voltage.data}
-                        width={1300}
                     />
                 </div>
             </div>

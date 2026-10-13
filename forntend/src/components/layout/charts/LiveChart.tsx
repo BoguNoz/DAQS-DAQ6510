@@ -61,7 +61,7 @@ const LiveChart = observer((props: LiveChartProps) => {
     return (
         <EChartsReact
             option={staticOption}
-            style={{ width: props.width ? `${props.width}px` : "650px" , height: "250px" }}
+            style={{ width: "100%" , height: "250px" }}
             onChartReady={(instance) => {
                 chartRef.current = instance;
                 instance.setOption({ series: [{ data: props.data }] });

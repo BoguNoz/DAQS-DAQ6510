@@ -75,7 +75,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
 
 
     return (
-        <SidebarMenu className="rounded-md border border-primary/40">
+        <SidebarMenu className="rounded-md border border-primary/40 bg-transparent">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <MenuTrigger
@@ -109,6 +109,7 @@ const MenuTrigger = observer((
         <DropdownMenuTrigger asChild>
             <SidebarMenuButton
                 size="lg"
+
             >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white text-gray-900">
                     <IconComponent className="size-4" />

@@ -1,7 +1,6 @@
 import {createBrowserRouter} from "react-router-dom";
 import SidebarContainer from "@/containers/SidebarContainer.tsx";
 import {en} from "@/text/en.ts";
-import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageContainer.tsx";
 import DataTablePageContainer from "@/containers/pages/DataTablePageContainer.tsx";
 import DashboardPageContainer from "@/containers/pages/DashboardPageContainer.tsx";
@@ -22,12 +21,12 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 path: `dashboard`,
-                element: <DashboardPageContainer  dataStore={dataStore} />,
+                element: <DashboardPageContainer dataStore={dataStore} />,
                 handle: { crumb: () => en.crumbs.dashboardPage },
             },
             {
                 path: `${roots.device}/:variant/:deviceName?/:deviceId?`,
-                element: <DeviceSettingsPageContainer />,
+                element: <DeviceSettingsPageContainer dataStore={dataStore} />,
                 handle: {
                     crumb: (data) => {
                         const { variant, deviceName, deviceId } = data.params;
@@ -41,7 +40,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: `${roots.dataTable}`,
-                element: <DataTablePageContainer />,
+                element: <DataTablePageContainer dataStore={dataStore} />,
                 handle: {crumb: () => en.crumbs.dataTablePage},
             },
         ],

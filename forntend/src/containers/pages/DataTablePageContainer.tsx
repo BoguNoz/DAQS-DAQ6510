@@ -1,57 +1,31 @@
 import {observer} from "mobx-react-lite";
 import DataTablePage from "@/components/pages/DataTablePage.tsx";
-import { z } from "zod"
-import {dataTableFields, features, type dataTableSchema} from "@/features/data-table.schema.ts";
+import {z} from "zod"
+import {dataTableFields, type dataTableSchema, features} from "@/features/data-table.schema.ts";
 import {
     type ColumnFiltersState,
     type ColumnVisibilityState,
     createColumnHelper,
-    type PaginationState, type SortingState
+    type PaginationState,
+    type SortingState
 } from "@tanstack/react-table";
-import {HeaderCheckBox, RowCheckBox} from "@/components/layout/data-table/CheckBoxColumn.tsx";
 import {en} from "@/text/en.ts";
-import UserAvatarCell from "@/components/layout/data-table/UserAvatarCell.tsx";
 import DeviceCell from "@/components/layout/data-table/DeviceCell.tsx";
 import type {LogoKey} from "@/models/device/device.ts";
 import DateCell from "@/components/layout/data-table/DateCell.tsx";
 import {useCallback, useEffect, useMemo, useState} from "react";
+import type {DataStoreInterface} from "@/stores/data-store";
+import {toast} from "sonner";
 
 
-const devices = [
-    { hash: "test-1", name: "DAQ6510-A", logo: "cpu" },
-    { hash: "test-2", name: "DAQ6510-B", logo: "gauge" },
-    { hash: "test-3", name: "Modbus-Gateway-01", logo: "smartphone" },
-    { hash: "test-4", name: "Modbus-Gateway-02", logo: "tv" },
-    { hash: "test-5", name: "Sensor-Hub-X1", logo: "battery" },
-];
-
-function randomFloat(min: number, max: number, decimals = 2) {
-    return Number((Math.random() * (max - min) + min).toFixed(decimals));
+export interface DataTablePageProps {
+    dataStore: DataStoreInterface;
 }
 
-export const mockDataTable: Array<{
-    id: number;
-    time: Date;
-    device: { hash: string, name: string; logo: string };
-    t1: number;
-    t2: number;
-    voltage: number;
-}> = Array.from({ length: 45 }, (_, i) => {
-    const device = devices[i % devices.length];
-    const baseTime = new Date("2026-09-25T08:00:00");
-    const time = new Date(baseTime.getTime() - i * 5 * 60 * 1000); // co 5 min w tył
 
-    return {
-        id: i + 1,
-        time,
-        device,
-        t1: randomFloat(18, 45),
-        t2: randomFloat(15, 42),
-        voltage: randomFloat(220, 240, 1),
-    };
-});
+const DataTablePageContainer = observer((props: DataTablePageProps) => {
+    const { dataStore } = props;
 
-const DataTablePageContainer = observer(() => {
     const [data, setData] = useState<z.infer<typeof dataTableSchema>[]>([]);
     const [pageCount, setPageCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -63,73 +37,38 @@ const DataTablePageContainer = observer(() => {
     const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({});
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    const deviceOptions = useMemo(() => {
-        const uniqueDevices: string[] = [];
-
-
-        // TODO Trzeba dodać metode do data stora
-        mockDataTable.forEach((row) => {
-           uniqueDevices.push(row.device.hash)
-        });
-
-        return uniqueDevices;
-    }, [])
-
 
     useEffect(() => {
         let cancelled = false;
         setIsLoading(true);
 
-        const timeoutId = setTimeout(() => {
-            if (cancelled) return;
+        const timeoutId = setTimeout(async () => {
+            try {
+                const {items, total} = await dataStore.listMeasurements(
+                    columnFilters,
+                    pagination.pageIndex,
+                    pagination.pageSize,
+                );
+                if (cancelled) return;
 
-            let filtered = mockDataTable;
-
-            columnFilters.forEach((filter) => {
-                if (filter.id === dataTableFields.device && filter.value) {
-                    filtered = filtered.filter((row) => row.device.hash === filter.value);
+                setData(items);
+                setPageCount(Math.ceil(total / pagination.pageSize));
+            } catch {
+                if (!cancelled) {
+                    toast.error(en.toast.loadingError );
                 }
-                if (filter.id === dataTableFields.t1 && filter.value) {
-                    const { min, max } = filter.value as { min?: number; max?: number };
-                    filtered = filtered.filter(
-                        (row) => (min === undefined || row.t1 >= min) && (max === undefined || row.t1 <= max)
-                    );
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false);
                 }
-                if (filter.id === dataTableFields.t2 && filter.value) {
-                    const { min, max } = filter.value as { min?: number; max?: number };
-                    filtered = filtered.filter(
-                        (row) => (min === undefined || row.t2 >= min) && (max === undefined || row.t2 <= max)
-                    );
-                }
-                if (filter.id === dataTableFields.voltage && filter.value) {
-                    const { min, max } = filter.value as { min?: number; max?: number };
-                    filtered = filtered.filter(
-                        (row) => (min === undefined || row.voltage >= min) && (max === undefined || row.voltage <= max)
-                    );
-                }
-                if (filter.id === dataTableFields.time && filter.value) {
-                    const { from, to } = filter.value as { from?: string; to?: string };
-                    filtered = filtered.filter((row) => {
-                        if (from && row.time < new Date(from)) return false;
-                        if (to && row.time > new Date(to)) return false;
-                        return true;
-                    });
-                }
-            });
-
-            const start = pagination.pageIndex * pagination.pageSize;
-            const slice = filtered.slice(start, start + pagination.pageSize);
-
-            setData(slice);
-            setPageCount(Math.ceil(filtered.length / pagination.pageSize));
-            setIsLoading(false);
+            }
         }, 300);
 
         return () => {
             cancelled = true;
             clearTimeout(timeoutId);
         };
-    }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
+    }, [dataStore, pagination.pageIndex, pagination.pageSize, columnFilters]);
 
     useEffect(() => {
         setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -234,7 +173,6 @@ const DataTablePageContainer = observer(() => {
             getFilterValue={getFilterValue}
             setFilterValue={setFilterValue}
 
-            deviceOptions={deviceOptions}
             isLoading={isLoading}
         />
     );

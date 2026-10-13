@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { FieldError, FieldLabel } from "@/components/ui/field.tsx";
 import { en } from "@/text/en.ts";
-import {Link, Computer, CheckCircle2, CircleX, PlusCircle, Trash2, PencilLine, Undo2} from "lucide-react";
+import {Link, Computer, CheckCircle2, PlusCircle, Trash2, PencilLine, Undo2} from "lucide-react";
 import { Input } from "@/components/ui/input.tsx";
 import { LogoMap } from "@/models/device/logo-map.ts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card.tsx";
@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import {formPrefix} from "@/containers/pages/constants";
 import {formFields, type formSchema} from "@/features/device-form.schema.ts";
 import {Separator} from "@/components/ui/separator.tsx";
-import {useEffect, useState} from "react";
 import {ButtonGroup} from "@/components/ui/button-group.tsx";
 import {Button} from "@/components/ui/button.tsx";
 
@@ -19,7 +18,7 @@ import {Button} from "@/components/ui/button.tsx";
 
 interface DeviceSettingsPageProps {
     form: UseFormReturn<any, any, any>
-    onSubmit: (data: z.infer<typeof formSchema>) => void
+    onSubmit: (data: z.infer<typeof formSchema>) => Promise<void>
     handleEditability: (variant?: "inspect" | "edit" | "add") => boolean;
     handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
     handleDelete: () => void

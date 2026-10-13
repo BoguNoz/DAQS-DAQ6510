@@ -66,6 +66,7 @@ export const en = {
             allDevices: "All devices",
             apply: "Apply",
             reset: "Reset",
+            devicePlaceholder: "DAQ6510",
         },
         footer: {
             rowsPerPage: "Rows per page",
@@ -78,5 +79,6 @@ export const en = {
         deviceUpdate: "Device updated",
         deviceDelete: "Device deleted",
         deviceDeleteFailed: "Device can not be deleted.",
+        loadingError: "Failed to load data.",
     },
 };

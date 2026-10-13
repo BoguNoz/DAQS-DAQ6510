@@ -29,7 +29,7 @@ export const dataTableFields = {
 }
 
 export const dataTableSchema = z.object({
-    id: z.number(),
+    hash: z.string(),
     /*user: z.object({
         name: z.string(),
         avatarKey: z.string().nullable().optional(),

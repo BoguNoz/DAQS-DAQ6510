@@ -61,7 +61,6 @@ interface DataTablePageProps {
     getFilterValue: <T>(filters: ColumnFiltersState, id: string) => (T | undefined);
     setFilterValue: (filters: ColumnFiltersState, id: string, value: unknown) => ColumnFilter[]
 
-    deviceOptions: string[]
     isLoading?: boolean;
 }
 
@@ -80,14 +79,13 @@ const DataTablePage = observer((props: DataTablePageProps) => {
         onColumnFilterChange,
         getFilterValue,
         setFilterValue,
-        deviceOptions,
         isLoading,
     } = props;
 
     const sortableId = useId();
 
     const dataIds = useMemo<UniqueIdentifier[]>(
-        () => initialData?.map(({ id }) => id) || [],
+        () => initialData?.map(({ hash }) => id) || [],
         [initialData]
     );
 
@@ -104,7 +102,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
             columnFilters,
             pagination,
         },
-        getRowId: (row) => row.id.toString(),
+        getRowId: (row) => row.hash,
         onSortingChange: onSortingChange,
         onColumnFiltersChange: onColumnFilterChange,
         onColumnVisibilityChange: onColumnVisibilityChange,
@@ -119,7 +117,6 @@ const DataTablePage = observer((props: DataTablePageProps) => {
                     table={table}
                     columnFilters={columnFilters}
                     onColumnFiltersChange={onColumnFilterChange}
-                    deviceOptions={deviceOptions}
                     getFilterValue={getFilterValue}
                     setFilterValue={setFilterValue}
                 />
@@ -282,19 +279,17 @@ const TableFilteringHeader = observer((
         table: any;
         columnFilters: ColumnFiltersState;
         onColumnFiltersChange: (filters: ColumnFiltersState) => void;
-        deviceOptions: string[];
         getFilterValue: <T>(filters: ColumnFiltersState, id: string) => (T | undefined);
         setFilterValue: (filters: ColumnFiltersState, id: string, value: unknown) => ColumnFilter[]
     }
 ) => {
-    const {table, columnFilters, onColumnFiltersChange, deviceOptions, getFilterValue, setFilterValue} = props;
+    const {table, columnFilters, onColumnFiltersChange, getFilterValue, setFilterValue} = props;
 
     return (
         <div className="flex items-center gap-2 pb-4">
             <DataTableFilters
                 columnFilters={columnFilters}
                 onColumnFiltersChange={onColumnFiltersChange}
-                deviceOptions={deviceOptions}
                 getFilterValue={getFilterValue}
                 setFilterValue={setFilterValue}
             />
@@ -350,12 +345,11 @@ const DataTableFilters = observer((
     props: {
         columnFilters: ColumnFiltersState;
         onColumnFiltersChange: (filters: ColumnFiltersState) => void;
-        deviceOptions: string[];
         getFilterValue: <T>(filters: ColumnFiltersState, id: string) => (T | undefined);
         setFilterValue: (filters: ColumnFiltersState, id: string, value: unknown) => ColumnFilter[]
     }
 ) => {
-    const { columnFilters, onColumnFiltersChange, deviceOptions, getFilterValue, setFilterValue } = props;
+    const { columnFilters, onColumnFiltersChange, getFilterValue, setFilterValue } = props;
 
     // draft = lokalny stan, niezastosowany jeszcze do tabeli/API
     const [draft, setDraft] = useState<ColumnFiltersState>(columnFilters);
@@ -379,10 +373,6 @@ const DataTableFilters = observer((
         onColumnFiltersChange([]);
         setOpen(false);
     };
-
-    const handleOpenChange = (next: boolean) => {
-
-    }
 
     return (
         <Popover
@@ -423,37 +413,17 @@ const DataTableFilters = observer((
                     />
                 </div>
 
-                {/* Device */}
                 <div className="space-y-2">
                     <Label className="text-xs font-medium">
                         {en.dataTablePage.table.deviceColumn}
                     </Label>
-                    <Select
-                        value={device || "__all__"}
-                        onValueChange={(value) =>
-                            setDraft(
-                                setFilterValue(
-                                    draft,
-                                    dataTableFields.device,
-                                    value === "__all__" ? undefined : value
-                                )
-                            )
+                    <Input
+                        placeholder={en.dataTablePage.filtering.devicePlaceholder}
+                        value={device ?? ""}
+                        onChange={(e) =>
+                            setDraft(setFilterValue(draft, dataTableFields.device, e.target.value))
                         }
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All devices" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="__all__">
-                                {en.dataTablePage.filtering.allDevices}
-                            </SelectItem>
-                            {deviceOptions.map((hash) => (
-                                <SelectItem key={hash} value={hash}>
-                                    {hash}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    />
                 </div>
 
                 {/* T1 range */}

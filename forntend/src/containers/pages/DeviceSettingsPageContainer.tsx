@@ -8,15 +8,20 @@ import { formSchema } from "@/features/device-form.schema";
 import DeviceSettingsPage from "@/components/pages/DeviceSettingsPage.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {roots} from "@/roots/root.tsx";
-import {deviceStorage} from "@/helpers/device-storage.ts";
 import type {Device} from "@/models/device/device.ts";
 import {en} from "@/text/en.ts";
+import type {DataStoreInterface} from "@/stores/data-store.ts";
 
 
+export interface DeviceSettingsPageContainerProps {
+    dataStore: DataStoreInterface
+}
 
 
-const DeviceSettingsPageContainer = observer(() => {
+const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainerProps) => {
     const { variant, deviceName, deviceId } = useParams();
+
+    const { dataStore } = props;
 
     const navigate = useNavigate();
 
@@ -38,10 +43,11 @@ const DeviceSettingsPageContainer = observer(() => {
     });
 
     useEffect(() => {
-        if (validVariant !== "add" && deviceId) {
-            const existingDevice = deviceStorage.getByAddress(deviceId);
 
-            if (existingDevice) {
+        const load = async () => {
+            if (validVariant !== "add" && deviceId) {
+                const existingDevice = await dataStore.getDevice(deviceId);
+
                 form.reset({
                     name: existingDevice.name,
                     logo: existingDevice.logo,
@@ -53,24 +59,31 @@ const DeviceSettingsPageContainer = observer(() => {
                     voltage_slot: existingDevice.voltage_slot || "",
                     voltage_channel: existingDevice.voltage_channel || "",
                 });
+                return;
             }
-        } else if (validVariant === "add") {
-            form.reset({
-                name: "",
-                logo: "cpu",
-                resourceAddress: "",
-                thermocouple_1_slot: "",
-                thermocouple_1_channel: "",
-                thermocouple_2_slot: "",
-                thermocouple_2_channel: "",
-                voltage_slot: "",
-                voltage_channel: "",
-            });
-        }
-    }, [deviceId, validVariant, form]);
 
-    const onSubmit = useCallback((data: z.infer<typeof formSchema>) => {
-        const deviceData: Device = {
+            if (validVariant === "add") {
+                form.reset({
+                    name: "",
+                    logo: "cpu",
+                    resourceAddress: "",
+                    thermocouple_1_slot: "",
+                    thermocouple_1_channel: "",
+                    thermocouple_2_slot: "",
+                    thermocouple_2_channel: "",
+                    voltage_slot: "",
+                    voltage_channel: "",
+                });
+            }
+        }
+
+        load()
+
+    }, [dataStore, deviceId, validVariant, form]);
+
+    const onSubmit = useCallback(async (data: z.infer<typeof formSchema>) => {
+        const device: Device = {
+            hash: deviceId || "",
             name: data.name,
             logo: data.logo as Device["logo"],
             resource_address: data.resourceAddress,
@@ -82,19 +95,19 @@ const DeviceSettingsPageContainer = observer(() => {
             voltage_channel: data.voltage_channel,
         };
 
-        deviceStorage.save(deviceData, deviceId);
+        await dataStore.addDevice(device)
 
         toast.success(en.toast.deviceUpdate)
 
-    }, [deviceId]);
+    }, [dataStore, deviceId]);
 
     const handleDelete = useCallback(() => {
         if (deviceId) {
-            deviceStorage.remove(deviceId);
+            dataStore.deleteDevice(deviceId);
             toast.info(en.toast.deviceDelete);
             navigate(`/${roots.device}/add`);
         }
-    }, [deviceId, navigate]);
+    }, [dataStore, deviceId, navigate]);
 
     const handleEditability = useCallback((variant?: "inspect" | "edit" | "add"): boolean => {
         return variant == "inspect";

@@ -6,12 +6,11 @@ import type {MeasurementsPage} from "@/models/measurement/measurements-page.ts";
 import type {ExperimentHistory} from "@/models/experiment/experiment-history.ts";
 import type {ExperimentChannelMap} from "@/models/experiment/experiment-channel-map.ts";
 import type {ExperimentConnectionConfig} from "@/models/experiment/experiment-connection-config.ts";
-import type {ExperimentStatus} from "@/models/experiment/experiment-status.ts";
 
 export interface DataStoreInterface {
 
     startExperiment: () => Promise<void>;
-    stopEx: () => Promise<void>;
+    stopExperiment: () => Promise<void>;
     getExperimentHistory: () => Promise<ExperimentHistory>;
 
 
@@ -40,7 +39,39 @@ class DataStore implements DataStoreInterface {
     _deviceStatus: boolean | null = false;
 
 
+    startExperiment = async () => {
+        const channelMap: ExperimentChannelMap = {
+            thermocouple_1: {
+                slot: this._selectedDevice?.thermocouple_1_slot ?? "1",
+                channel: this._selectedDevice?.thermocouple_1_channel ?? "1"
+            },
+            thermocouple_2: {
+                slot: this._selectedDevice?.thermocouple_2_slot ?? "1",
+                channel: this._selectedDevice?.thermocouple_2_channel ?? "1"
+            },
+            voltage_probe: {
+                slot: this._selectedDevice?.voltage_slot ?? "1",
+                channel: this._selectedDevice?.voltage_channel ?? "1"
+            }
+        };
 
+        await experimentService.updateChannelMap(channelMap);
+
+        const connectionConfig: ExperimentConnectionConfig = {
+            use_simulator: false,
+            device_hash: this._selectedDevice?.hash ?? "test",
+            resource_address: this._selectedDevice?.resource_address ?? "test",
+        }
+
+        await experimentService.updateConnectionConfig(connectionConfig)
+
+        await experimentService.start()
+
+    }
+
+    stopExperiment = async () => await experimentService.stop()
+
+    getExperimentHistory = async () => await experimentService.getHistory()
 
     _setStatus = (status: boolean | null) => {
         this._deviceStatus = status;

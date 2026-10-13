@@ -37,6 +37,7 @@ class ExperimentService implements ExperimentServiceInterface {
 
     getDeviceStatus = () => this.client.request<boolean>(ExperimentActions.DEVICE_STATUS);
 
+    // Zapytać się po co mi metoda onStatus to pobierania pomiarów kiedy mam poniższa metodę
     getHistory = () => this.client.request<ExperimentHistory>(ExperimentActions.GET_HISTORY);
 
     updateChannelMap = async (channels: ExperimentChannelMap) => {
@@ -47,6 +48,7 @@ class ExperimentService implements ExperimentServiceInterface {
         await this.client.request(ExperimentActions.UPDATE_CONNECTION_CONFIG, {connection});
     };
 
+    // Brodcast
     onStatus = (handler: (state: ExperimentStatus) => void) =>
         this.client.on<ExperimentStatus>(ExperimentActions.STATUS, handler);
 

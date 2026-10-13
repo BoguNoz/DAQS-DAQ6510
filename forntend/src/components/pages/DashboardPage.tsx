@@ -18,8 +18,8 @@ const DashboardPage = observer((props: DashboardPageProps) => {
     const {t1, t2, voltage} = props;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full pt-6">
-            <div className="flex flex-col gap-4">
+        <>
+            <div className="grid grid-cols-1 gap-4 pt-6 lg:grid-cols-2">
                 <MetricCard
                     title={en.dashboardPage.charts.thermocouple_1}
                     value={t1.value}
@@ -27,6 +27,7 @@ const DashboardPage = observer((props: DashboardPageProps) => {
                     isStable={t1.isStable}
                     data={t1.data}
                 />
+
                 <MetricCard
                     title={en.dashboardPage.charts.thermocouple_2}
                     value={t2.value}
@@ -34,19 +35,22 @@ const DashboardPage = observer((props: DashboardPageProps) => {
                     isStable={t2.isStable}
                     data={t2.data}
                 />
-            </div>
 
-            <div className="flex flex-col">
-                <MetricCard
-                    title={en.dashboardPage.charts.voltage}
-                    value={voltage.value}
-                    unit="V"
-                    isStable={voltage.isStable}
-                    data={voltage.data}
-                />
+                <div className="lg:col-span-2">
+                    <MetricCard
+                        title={en.dashboardPage.charts.voltage}
+                        value={voltage.value}
+                        unit="V"
+                        isStable={voltage.isStable}
+                        data={voltage.data}
+                        width={1300}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 });
+
+
 
 export default DashboardPage;

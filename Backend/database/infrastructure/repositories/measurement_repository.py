@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func, and_
 from database.domain.models.measurement import Measurement
+from database.infrastructure.models.device import DeviceORM
 from database.infrastructure.models.measurement import MeasurementORM
 
 class MeasurementRepository:
@@ -63,8 +64,18 @@ class MeasurementRepository:
                 if value.get("to"):
                     conditions.append(MeasurementORM.time <= value["to"])
 
-            elif field_id == "device" and value:
-                conditions.append(MeasurementORM.device_id == value)
+
+            elif field_id == "device" and isinstance(value, str) and value.strip():
+
+                pattern = f"%{self._escape_like(value.strip())}%"
+
+                matching_devices = select(DeviceORM.id).where(
+
+                    DeviceORM.name.ilike(pattern, escape="\\")
+
+                )
+
+                conditions.append(MeasurementORM.device_id.in_(matching_devices))
 
             elif field_id == "t1" and value:
                 if value.get("min") is not None:
@@ -86,3 +97,5 @@ class MeasurementRepository:
 
         return conditions
 
+    def _escape_like(text: str) -> str:
+        return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")

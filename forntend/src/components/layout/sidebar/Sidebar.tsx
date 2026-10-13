@@ -12,18 +12,25 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import type { Device } from "@/models/device/device.ts"
 import { Outlet, useMatches } from "react-router-dom"
-import { Fragment } from "react"
+import {Fragment, useCallback} from "react"
+import {Play, Square} from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 interface SidebarProps {
     setSelectedDevice: (device: Device) => void
     getDevices: () => Promise<Device[]>
     deleteDevice: (hash: string) => Promise<void>
     handleNavigateToDevice: (variant: "inspect" | "edit" | "add", hash?: string) => void
+    handleNavigateToDashboard: () => void;
+    handleNavigateToDataTable: () => void;
     getDeviceConnectionStatus: () => boolean | null;
+
+    handleOnStart: () => Promise<void>
+    handleOnStop: () => Promise<void>
 }
 
 const Sidebar = observer((props: SidebarProps) => {
-    const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus, setSelectedDevice } = props
+    const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus, handleNavigateToDashboard, handleNavigateToDataTable, setSelectedDevice, handleOnStart, handleOnStop } = props
 
     return (
         <SidebarProvider>
@@ -33,14 +40,25 @@ const Sidebar = observer((props: SidebarProps) => {
                 getDevices={getDevices}
                 deleteDevice={deleteDevice}
                 handleNavigateToDevice={handleNavigateToDevice}
+                handleNavigateToDashboard={handleNavigateToDashboard}
+                handleNavigateToDataTable={handleNavigateToDataTable}
                 getDeviceConnectionStatus={getDeviceConnectionStatus}
             />
-            <Inset />
+            <Inset
+                handleOnStop={handleOnStop}
+                handleOnStart={handleOnStart}
+            />
         </SidebarProvider>
     )
 })
 
-const Inset = observer(() => {
+const Inset = observer((
+    props: {
+        handleOnStart: () => Promise<void>
+        handleOnStop: () => Promise<void>
+    }
+) => {
+    const {handleOnStart, handleOnStop} = props;
     const matches = useMatches()
 
     const crumbs = matches
@@ -50,7 +68,7 @@ const Inset = observer(() => {
     return (
         <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
-                <div className="flex items-center gap-2 px-4">
+                <div className="flex min-w-0 items-center gap-2 px-4">
                     <SidebarTrigger className="-ml-1" />
                     <Separator
                         orientation="vertical"
@@ -71,6 +89,12 @@ const Inset = observer(() => {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <div className="ml-auto px-4">
+                    <ControlPanel
+                        handleOnStart={handleOnStart}
+                        handleOnStop={handleOnStop}
+                    />
+                </div>
             </header>
             <Separator orientation="horizontal"/>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -79,5 +103,56 @@ const Inset = observer(() => {
         </SidebarInset>
     )
 })
+
+
+const ControlPanel = observer(
+    (props: {
+        handleOnStart: () => Promise<void>;
+        handleOnStop: () => Promise<void>;
+    }) => {
+        const { handleOnStart, handleOnStop } = props;
+
+        const handleValueChange = async (value: string) => {
+            if (value === "start") {
+                await handleOnStart();
+            }
+
+            if (value === "stop") {
+                await handleOnStop();
+            }
+        };
+
+        return (
+            <ToggleGroup
+                type="single"
+                onValueChange={handleValueChange}
+                className="inline-flex items-center gap-0.5 rounded-lg border border-border/60 bg-background/80 p-0.5 shadow-sm backdrop-blur-xl"
+            >
+                <ToggleGroupItem
+                    value="start"
+                    title="Start"
+                    aria-label="Start"
+                    className="h-7 w-7 rounded-md"
+                >
+                    <Play
+                        className="h-3.5 w-3.5"
+                    />
+                </ToggleGroupItem>
+
+                <ToggleGroupItem
+                    value="stop"
+                    title="Stop"
+                    aria-label="Stop"
+                    className="h-7 w-7 rounded-md"
+                >
+                    <Square
+                        className="h-3.5 w-3.5"
+                    />
+                </ToggleGroupItem>
+            </ToggleGroup>
+        );
+    }
+);
+
 
 export default Sidebar

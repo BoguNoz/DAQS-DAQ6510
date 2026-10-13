@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                path: `dashboard`,
+                path: `${roots.dashboard}`,
                 element: <DashboardPageContainer dataStore={dataStore} />,
                 handle: { crumb: () => en.crumbs.dashboardPage },
             },

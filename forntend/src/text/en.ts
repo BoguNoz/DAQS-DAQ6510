@@ -15,6 +15,10 @@ export const en = {
             info: "Info",
         },
     },
+    sidebarTabs: {
+        experimentData: "Experiment Data",
+        dashboardPage: "Dashboard",
+    },
     dashboardPage: {
         charts: {
             thermocouple_1: "Thermocouple 1",

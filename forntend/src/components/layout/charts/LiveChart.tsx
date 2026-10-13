@@ -9,6 +9,7 @@ interface LiveChartProps {
     data: number[];
     color?: string;
     minimal?: boolean;
+    width?: number;
 }
 
 const LiveChart = observer((props: LiveChartProps) => {
@@ -57,11 +58,10 @@ const LiveChart = observer((props: LiveChartProps) => {
         });
     }, [data]);
 
-
     return (
         <EChartsReact
             option={staticOption}
-            style={{ width: "700px", height: "250px" }}
+            style={{ width: props.width ? `${props.width}px` : "650px" , height: "250px" }}
             onChartReady={(instance) => {
                 chartRef.current = instance;
                 instance.setOption({ series: [{ data: props.data }] });

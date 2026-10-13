@@ -10,21 +10,24 @@ interface MetricCardProps {
     isStable: boolean;
     data: number[];
     color?: string;
+    width?: number;
 }
 
 const MetricCard = observer((props: MetricCardProps) => {
-    const {title, value, unit, isStable, data, color} = props;
+    const {title, value, unit, isStable, data, color, width} = props;
 
     return (
-        <Card className="gap-4">
+        <Card className="gap-4 bg-transparent">
             <CardHeader className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">{title}</span>
+              <span className="text-xs font-medium tracking-wide text-muted-foreground/80">
+                {title}
+            </span>
                 <Badge
-                    variant="secondary"
+                    variant="outline"
                     className={
                         isStable
-                            ? "bg-ok-accent"
-                            : "bg-destructive"
+                            ? "border-ok-accent text-ok-accent bg-transparent"
+                            : "bg-transparent animate-pulse"
                     }
                 >
                     {isStable ? "Stable" : "Stabilizing"}
@@ -32,13 +35,15 @@ const MetricCard = observer((props: MetricCardProps) => {
             </CardHeader>
 
             <CardContent className="flex flex-col gap-3">
-            <span className="text-3xl font-semibold tracking-tight">
-                {value !== null ? value.toFixed(2) : "—"}
-                <span className="ml-1 text-lg font-normal text-muted-foreground">{unit}</span>
-            </span>
+                <span className="text-3xl font-light tracking-tight tabular-nums">
+                    {value !== null ? value.toFixed(2) : "—"}
+                    <span className="ml-1.5 text-sm font-normal tracking-normal text-muted-foreground/70">
+                        {unit}
+                    </span>
+                </span>
 
                 <div>
-                    <LiveChart title="" unit={unit} data={data} color={color} />
+                    <LiveChart title="" unit={unit} data={data} color={color} width={width} />
                 </div>
             </CardContent>
         </Card>

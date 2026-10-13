@@ -88,6 +88,12 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
         }
     }, [navigate]);
 
+    const handleNavigateToDashboard = useCallback(() => navigate(`/${roots.dashboard}`),[navigate]);
+
+    const handleNavigateToDataTable = useCallback(() => navigate(`/${roots.dataTable}`),[navigate]);
+
+    const handleOnStart = useCallback(async () => await dataStore.startExperiment(), [dataStore]);
+    const handleOnStop = useCallback(async () => await dataStore.stopExperiment(), [dataStore])
 
     return (
         <Sidebar
@@ -95,7 +101,11 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
             getDevices={getDevices}
             deleteDevice={deleteDevice}
             handleNavigateToDevice={handleNavigateToDevice}
+            handleNavigateToDashboard={handleNavigateToDashboard}
+            handleNavigateToDataTable={handleNavigateToDataTable}
             getDeviceConnectionStatus={dataStore.getStatus}
+            handleOnStart={handleOnStart}
+            handleOnStop={handleOnStop}
         />
     );
 });

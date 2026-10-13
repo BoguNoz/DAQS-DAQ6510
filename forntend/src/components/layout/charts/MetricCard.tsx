@@ -8,12 +8,12 @@ interface MetricCardProps {
     value: number | null;
     unit: string;
     isStable: boolean;
-    dataKey: string;
+    data: number[];
     color?: string;
 }
 
 const MetricCard = observer((props: MetricCardProps) => {
-    const {title, value, unit, isStable, dataKey, color} = props;
+    const {title, value, unit, isStable, data, color} = props;
 
     return (
         <Card className="gap-4">
@@ -38,7 +38,7 @@ const MetricCard = observer((props: MetricCardProps) => {
             </span>
 
                 <div>
-                    <LiveChart title="" unit={unit} dataKey={dataKey} color={color} />
+                    <LiveChart title="" unit={unit} data={data} color={color} />
                 </div>
             </CardContent>
         </Card>

@@ -19,9 +19,7 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        return dataStore.startPollingDeviceStatus();
-    }, [dataStore]);
+    useEffect(() => dataStore.startPollingDeviceStatus(), [dataStore]);
 
     const getDevices = React.useCallback(async (): Promise<Device[]>  => {
         //const stored =  await dataStore.getAllDevices()

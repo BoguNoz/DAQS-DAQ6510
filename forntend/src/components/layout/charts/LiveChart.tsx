@@ -2,12 +2,11 @@ import {observer} from "mobx-react-lite";
 import {useEffect, useMemo, useRef} from "react";
 import EChartsReact, {type EChartsInstance} from "echarts-for-react";
 import {getChartTheme} from "@/lib/chart-theme.ts";
-import {useMockHistory} from "@/lib/use-mock-history.ts";
 
 interface LiveChartProps {
     title: string;
     unit: string;
-    dataKey: string;
+    data: number[];
     color?: string;
     minimal?: boolean;
 }
@@ -15,7 +14,7 @@ interface LiveChartProps {
 const LiveChart = observer((props: LiveChartProps) => {
     const chartRef = useRef<EChartsInstance | null>(null);
 
-    const data: number[] = useMockHistory({ target: props.unit === "V" ? 0.002 : 25, noise: props.unit === "V" ? 0.0005 : 0.4 });
+    const data: number[] = props.data
     const theme = getChartTheme();
 
     const staticOption = useMemo(() => ({
@@ -65,6 +64,7 @@ const LiveChart = observer((props: LiveChartProps) => {
             style={{ width: "700px", height: "250px" }}
             onChartReady={(instance) => {
                 chartRef.current = instance;
+                instance.setOption({ series: [{ data: props.data }] });
             }}
         />
     );

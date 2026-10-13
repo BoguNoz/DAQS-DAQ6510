@@ -27,11 +27,28 @@ export class WSClient {
     private maxBackoffMs = 10_000;
     private readonly url: string;
 
+    private openWaiters = new Set<() => void>();
+
     constructor(url: string) {
         this.url = url;
     }
 
 
+    private waitForOpen(): Promise<void> {
+        if (this.socket?.readyState === WebSocket.OPEN) return Promise.resolve();
+
+        return new Promise((resolve, reject) => {
+            const waiter = () => {
+                clearTimeout(timer);
+                resolve();
+            };
+            const timer = setTimeout(() => {
+                this.openWaiters.delete(waiter);
+                reject(new Error("No server connection"));
+            }, this.timeoutMs);
+            this.openWaiters.add(waiter);
+        });
+    }
 
     connect = (lifecycle: WsLifecycleHandlers = {}): void => {
         if (this.active) return;
@@ -53,24 +70,27 @@ export class WSClient {
         this.lifecycle.onClose?.();
     };
 
-    request = <T = unknown>(action: string, payload: unknown = {}): Promise<T> =>
-        new Promise<T>((resolve, reject) => {
+    request = async <T = unknown>(action: string, payload: unknown = {}): Promise<T> => {
+        await this.waitForOpen();
+
+        return new Promise<T>((resolve, reject) => {
             const socket = this.socket;
             if (!socket || socket.readyState !== WebSocket.OPEN) {
-                reject();
+                reject("No server connection");
                 return;
             }
 
             const id = String(++this.seq);
             const timer = setTimeout(() => {
                 this.pending.delete(id);
-                reject();
+                reject(new Error(`No response for '${action}'`));
             }, this.timeoutMs);
 
             this.pending.set(id, {resolve, reject, timer});
             const request: WSRequest = {id, action, payload};
             socket.send(JSON.stringify(request));
         });
+    }
 
     on = <T = unknown>(eventType: string, handler: (payload: T) => void): (() => void) => {
         let handlers = this.listeners.get(eventType);
@@ -89,6 +109,8 @@ export class WSClient {
         socket.onopen = () => {
             if (this.socket !== socket) return;
             this.reconnectAttempt = 0;
+            this.openWaiters.forEach((waiter) => waiter());
+            this.openWaiters.clear();
             this.lifecycle.onOpen?.();
         };
 

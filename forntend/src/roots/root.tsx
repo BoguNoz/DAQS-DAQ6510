@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 path: `dashboard`,
-                element: <DashboardPageContainer />,
+                element: <DashboardPageContainer  dataStore={dataStore} />,
                 handle: { crumb: () => en.crumbs.dashboardPage },
             },
             {

@@ -75,7 +75,7 @@ const DeviceSwitcher = observer((props: DeviceSwitcherProps) => {
 
 
     return (
-        <SidebarMenu className="border rounded-md">
+        <SidebarMenu className="rounded-md border border-primary/40">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <MenuTrigger
@@ -109,9 +109,8 @@ const MenuTrigger = observer((
         <DropdownMenuTrigger asChild>
             <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white text-gray-900">
                     <IconComponent className="size-4" />
                 </div>
                 <ConnectionState
@@ -150,7 +149,9 @@ const ConnectionState = observer((
             <MarkerIcon>
                 {getIcon(status)}
             </MarkerIcon>
-            <MarkerContent className={status === null ? "shimmer" : undefined}>
+            <MarkerContent
+                className={status === null ? "shimmer" : "text-foreground"}
+            >
                 {device?.name}
             </MarkerContent>
         </Marker>

@@ -1,8 +1,13 @@
+from functools import partial
+
 import pyvisa
 import asyncio
 
+from adapters.measurement_sink import DatabaseMeasurementSink
 from container import Services
-from database.infrastructure.connection import SessionFactory
+from database.infrastructure.database.connection import SessionFactory
+from database.infrastructure.database.dev_seed import seed_dev_data
+from database.infrastructure.database.init import init_database
 from database.service.database_service import DatabaseService
 from experiment.config.store import JsonConfigStore
 from experiment.service.experiment_service import ExperimentService
@@ -15,10 +20,15 @@ async def main() -> None:
 
     print(rm.list_resources())
 
-    config_store = JsonConfigStore()
-    experiment_service = ExperimentService(build_orchestrator, config_store)
+    await asyncio.to_thread(init_database)
+    await asyncio.to_thread(seed_dev_data)
 
     database_service = DatabaseService(SessionFactory)
+    measurement_sink = DatabaseMeasurementSink(database_service)
+
+    config_store = JsonConfigStore()
+    experiment_service = ExperimentService(partial(build_orchestrator, measurement_sink), config_store)
+
 
     services = Services(experiment=experiment_service, database=database_service)
 

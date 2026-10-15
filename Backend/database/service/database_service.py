@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from sqlalchemy.orm import Session, sessionmaker
@@ -56,6 +57,15 @@ class DatabaseService:
         with self._session_factory.begin() as session:
             created_id = MeasurementRepository(session).create(orm)
         return self._hasher.encode(created_id)
+
+    def record_measurement(self, device_hash: str, time: datetime,
+                           t1: float, t2: float, voltage: float) -> None:
+        orm = MeasurementORM(
+            device_id=self._hasher.decode(device_hash),
+            time=time, t1=t1, t2=t2, voltage=voltage,
+        )
+        with self._session_factory.begin() as session:
+            MeasurementRepository(session).create(orm)
 
     def list_measurements(
             self,

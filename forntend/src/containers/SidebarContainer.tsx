@@ -22,7 +22,7 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
     useEffect(() => dataStore.startPollingDeviceStatus(), [dataStore]);
 
     const getDevices = React.useCallback(async (): Promise<Device[]>  => {
-        //const stored =  await dataStore.getAllDevices()
+        const stored =  await dataStore.getAllDevices()
 
 
         // TODO Do usunięcia
@@ -65,7 +65,7 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
             },
         ];
 
-        return defaults;
+        return stored;
     }, [dataStore]);
 
     const setSelectedDevice = useCallback((device: Device) => {

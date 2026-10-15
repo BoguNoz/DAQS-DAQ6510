@@ -1,9 +1,11 @@
 import threading
 import time
+from datetime import datetime, timezone
 
 from daq6510.instrument import DAQ6510
 from daq6510.transport.exceptions import InstrumentError
 from experiment.config.config import ChannelRole
+from experiment.core.ports import MeasurementSink, MeasurementRecord
 from experiment.methods.kalman import ScalarKalmanFilter
 from experiment.methods.seebeck import calculate_seebeck_coefficient
 from experiment.methods.stability import StabilityDetector
@@ -19,6 +21,8 @@ class Orchestrator:
             device_hash: str,
             process_variance: float,
             measurement_variance: float,
+            sink: MeasurementSink,
+            record_interval_seconds: float = 10.0,
             poll_interval_seconds: float = 1.0,
             max_consecutive_errors: int = 5,
     ):
@@ -39,6 +43,11 @@ class Orchestrator:
 
         self._max_consecutive_errors = max_consecutive_errors
         self._consecutive_errors = 0
+
+        self._device_hash = device_hash
+        self._sink = sink
+        self._record_interval = record_interval_seconds
+        self._last_recorded = None
 
     def start(self) -> None:
         self._setup_channels()
@@ -82,6 +91,7 @@ class Orchestrator:
             try:
                 self._daq.initiate()
                 readings = self._daq.read_scan_data(count=3)
+                self._record(readings)
                 self._step(readings)
                 self._consecutive_errors = 0  # reset po udanym kroku
             except InstrumentError as e:
@@ -124,3 +134,20 @@ class Orchestrator:
             coefficient = calculate_seebeck_coefficient(filtered_voltage, delta_t)
             self._shared_data.update_seebeck_coefficient(coefficient)
             self._shared_data.transition_to(ExperimentState.DONE)
+
+    def _record(self, readings: dict[str, float]) -> None:
+        if self._shared_data.state == ExperimentState.DONE:
+            return
+
+        now = time.monotonic()
+        if self._last_recorded is not None and now - self._last_recorded < self._record_interval:
+            return
+        self._last_recorded = now
+
+        self._sink.write(MeasurementRecord(
+            device_hash=self._device_hash,
+            time=datetime.now(timezone.utc),
+            t1=readings[self._channel_map["thermocouple_1"].address],
+            t2=readings[self._channel_map["thermocouple_2"].address],
+            voltage=readings[self._channel_map["voltage_probe"].address],
+        ))

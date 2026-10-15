@@ -3,6 +3,7 @@ from dataclasses import asdict
 from typing import List
 
 from database.domain.models.device import Device
+from database.domain.models.measurement import Measurement
 from database.service.database_service import DatabaseService
 from facade.websocket.protocol import ProtocolError
 from facade.websocket.router import Router
@@ -50,9 +51,12 @@ class DatabaseHandlers:
             payload.get("page_index", 0),
             payload.get("page_size", 20),
         )
-        return {"items": items, "total": total}
+        return {
+            "items": [self._measurement_to_wire(m) for m in items],
+            "total": total,
+        }
 
-    def _device_from_dict(data, *, is_new: bool = False) -> Device:
+    def _device_from_dict(self, data, *, is_new: bool = False) -> Device:
         if not isinstance(data, dict):
             raise ProtocolError()
         fields = {**data, "hash": ""} if is_new else data
@@ -60,3 +64,17 @@ class DatabaseHandlers:
             return Device(**fields)
         except TypeError as e:
             raise ProtocolError() from e
+
+    def _measurement_to_wire(self, m: Measurement) -> dict:
+        return {
+            "hash": m.hash,
+            "device": {
+                "hash": m.device.hash,
+                "name": m.device.name,
+                "logo": m.device.logo,
+            },
+            "time": m.time.isoformat(),  # datetime → string
+            "t1": m.t1,
+            "t2": m.t2,
+            "voltage": m.voltage,
+        }

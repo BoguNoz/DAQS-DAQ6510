@@ -27,13 +27,15 @@ class DeviceRepository:
     def create(self, orm: DeviceORM) -> int:
         self.session.add(orm)
         self.session.commit()
-        self.session.refresh(orm)
         return orm.id
 
     def update(self, orm: DeviceORM) -> int:
         orm_n = self.session.get(DeviceORM, orm.id)
-        if not orm:
+
+        if orm_n is None:
             return None
+
+        print(orm_n.id)
 
         orm_n.name = orm.name
         orm_n.logo = orm.logo
@@ -46,8 +48,8 @@ class DeviceRepository:
         orm_n.voltage_channel = orm.voltage_channel
 
         self.session.commit()
-        self.session.refresh(orm)
-        return orm.id
+
+        return orm_n.id
 
     def delete(self, id: int) -> bool:
         orm = self.session.get(DeviceORM, id)

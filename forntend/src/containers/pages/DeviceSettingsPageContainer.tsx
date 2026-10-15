@@ -83,7 +83,7 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
 
     const onSubmit = useCallback(async (data: z.infer<typeof formSchema>) => {
         const device: Device = {
-            hash: deviceId || "",
+            hash: "",
             name: data.name,
             logo: data.logo as Device["logo"],
             resource_address: data.resourceAddress,
@@ -96,6 +96,28 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
         };
 
         await dataStore.addDevice(device)
+
+
+        toast.success(en.toast.deviceAdd)
+
+    }, [dataStore, deviceId]);
+
+    const onUpdate = useCallback(async (data: z.infer<typeof formSchema>) => {
+        const device: Device = {
+            hash: deviceId || "",
+            name: data.name,
+            logo: data.logo as Device["logo"],
+            resource_address: data.resourceAddress,
+            thermocouple_1_slot: data.thermocouple_1_slot,
+            thermocouple_1_channel: data.thermocouple_1_channel,
+            thermocouple_2_slot: data.thermocouple_2_slot,
+            thermocouple_2_channel: data.thermocouple_2_channel,
+            voltage_slot: data.voltage_slot,
+            voltage_channel: data.voltage_channel,
+        };
+
+        await dataStore.updateDevice(device)
+
 
         toast.success(en.toast.deviceUpdate)
 
@@ -128,6 +150,7 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
         <DeviceSettingsPage
             form={form}
             onSubmit={onSubmit}
+            onUpdate={onUpdate}
             variant={validVariant}
             handleEditability={handleEditability}
             handleNavigateToDevice={handleNavigateToDevice}

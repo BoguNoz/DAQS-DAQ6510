@@ -4,7 +4,7 @@ import time
 
 from sqlalchemy.exc import DBAPIError
 
-from database.infrastructure.database.session import engine
+from database.infrastructure.database.connection import engine
 from database.infrastructure.models.base import Base
 
 logger = logging.getLogger(__name__)

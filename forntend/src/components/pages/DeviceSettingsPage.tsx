@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button.tsx";
 interface DeviceSettingsPageProps {
     form: UseFormReturn<any, any, any>
     onSubmit: (data: z.infer<typeof formSchema>) => Promise<void>
+    onUpdate: (data: z.infer<typeof formSchema>) => Promise<void>
     handleEditability: (variant?: "inspect" | "edit" | "add") => boolean;
     handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
     handleDelete: () => void
@@ -27,12 +28,13 @@ interface DeviceSettingsPageProps {
 
 
 const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
-    const { form, onSubmit, variant, handleEditability, handleNavigateToDevice, handleDelete } = props;
+    const { form, onSubmit, onUpdate, variant, handleEditability, handleNavigateToDevice, handleDelete } = props;
     const disable = handleEditability(variant);
 
     return (
         <div className="min-h-screen p-6 flex flex-col pl-10 pr-10">
            <ContextButtons
+               onUpdate={onUpdate}
                variant={variant}
                handleNavigateToDevice={handleNavigateToDevice}
                handleDelete={handleDelete}
@@ -66,13 +68,14 @@ const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
 
 const ContextButtons = observer((
     props: {
+        onUpdate: (data: z.infer<typeof formSchema>) => Promise<void>
         variant?: "inspect" | "edit" | "add"
         handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
         handleDelete: () => void
         form: UseFormReturn<any, any, any>
     }
 ) => {
-    const {variant, handleNavigateToDevice, handleDelete, form} = props;
+    const {onUpdate, variant, handleNavigateToDevice, handleDelete, form} = props;
 
     const { isDirty } = useFormState({ control: form.control });
 
@@ -98,7 +101,10 @@ const ContextButtons = observer((
     if (variant === "edit") {
         return (
             <ButtonGroup>
-                <Button type="submit" form={formPrefix}>
+                <Button
+                    type="button"
+                    onClick={form.handleSubmit(onUpdate)}
+                >
                     <CheckCircle2 />
                     {en.devicePage.buttons.save}
                 </Button>

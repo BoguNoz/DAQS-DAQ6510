@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func, select
 
-from database.infrastructure.database.session import SessionFactory
+from database.infrastructure.database.connection import SessionFactory
 from database.infrastructure.models.device import DeviceORM
 from database.infrastructure.models.measurement import MeasurementORM
 

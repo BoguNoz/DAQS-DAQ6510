@@ -54,7 +54,6 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
                 );
                 if (cancelled) return;
 
-                console.log(items, total)
                 setData(items);
                 setPageCount(Math.ceil(total / pagination.pageSize));
             } catch (err) {

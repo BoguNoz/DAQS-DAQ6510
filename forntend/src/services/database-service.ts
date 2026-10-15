@@ -70,6 +70,7 @@ class DatabaseService implements DatabaseServiceInterface {
     };
 
     listMeasurements = async (filters: MeasurementFilter[], pageIndex: number, pageSize: number) => {
+
         const page = await this.client.request<{ items: MeasurementWire[]; total: number }>(
             DatabaseActions.LIST_MEASUREMENTS,
             {filters, page_index: pageIndex, page_size: pageSize},

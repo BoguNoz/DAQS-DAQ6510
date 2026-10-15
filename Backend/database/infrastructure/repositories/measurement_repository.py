@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_, false
 from database.domain.models.measurement import Measurement
 from database.infrastructure.models.device import DeviceORM
 from database.infrastructure.models.measurement import MeasurementORM
@@ -53,7 +53,6 @@ class MeasurementRepository:
 
     def _build_conditions(self, filters: list[dict], ) -> list:
         conditions = []
-
         for f in filters:
             field_id = f.get("id")
             value = f.get("value")
@@ -64,18 +63,12 @@ class MeasurementRepository:
                 if value.get("to"):
                     conditions.append(MeasurementORM.time <= value["to"])
 
-
-            elif field_id == "device" and isinstance(value, str) and value.strip():
-
-                pattern = f"%{self._escape_like(value.strip())}%"
-
-                matching_devices = select(DeviceORM.id).where(
-
-                    DeviceORM.name.ilike(pattern, escape="\\")
-
-                )
-
-                conditions.append(MeasurementORM.device_id.in_(matching_devices))
+            elif field_id == "device_ids":
+                ids = value if isinstance(value, list) else []
+                if ids:
+                    conditions.append(MeasurementORM.device_id.in_(ids))
+                else:
+                    conditions.append(false())
 
             elif field_id == "t1" and value:
                 if value.get("min") is not None:
@@ -95,6 +88,7 @@ class MeasurementRepository:
                 if value.get("max") is not None:
                     conditions.append(MeasurementORM.voltage <= value["max"])
 
+        print(conditions)
         return conditions
 
     def _escape_like(text: str) -> str:

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from database.infrastructure.models.base import Base
 from database.infrastructure.models.types import UTCDateTime
-
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class MeasurementORM(Base):
     __tablename__ = "measurements"
@@ -16,3 +16,5 @@ class MeasurementORM(Base):
     t1: Mapped[float]
     t2: Mapped[float]
     voltage: Mapped[float]
+
+    device: Mapped["DeviceORM"] = relationship(back_populates="measurements")

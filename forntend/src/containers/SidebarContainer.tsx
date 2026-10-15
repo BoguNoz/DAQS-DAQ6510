@@ -24,47 +24,6 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
     const getDevices = React.useCallback(async (): Promise<Device[]>  => {
         const stored =  await dataStore.getAllDevices()
 
-
-        // TODO Do usunięcia
-        const defaults: Device[] = [
-            {
-                hash: "test",
-                name: "Acme Inc",
-                logo: "radio",
-                resource_address: "acme-inc",
-                thermocouple_1_slot: "1",
-                thermocouple_1_channel: "101",
-                thermocouple_2_slot: "1",
-                thermocouple_2_channel: "102",
-                voltage_slot: "2",
-                voltage_channel: "101",
-            },
-            {
-                hash: "test",
-                name: "Acme Corp.",
-                logo: "router",
-                resource_address: "acme-corp",
-                thermocouple_1_slot: "1",
-                thermocouple_1_channel: "201",
-                thermocouple_2_slot: "1",
-                thermocouple_2_channel: "202",
-                voltage_slot: "2",
-                voltage_channel: "201",
-            },
-            {
-                hash: "test",
-                name: "Evil Corp.",
-                logo: "cpu",
-                resource_address: "evil-corp",
-                thermocouple_1_slot: "1",
-                thermocouple_1_channel: "301",
-                thermocouple_2_slot: "1",
-                thermocouple_2_channel: "302",
-                voltage_slot: "2",
-                voltage_channel: "301",
-            },
-        ];
-
         return stored;
     }, [dataStore]);
 

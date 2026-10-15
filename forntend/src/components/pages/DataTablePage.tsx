@@ -85,7 +85,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
     const sortableId = useId();
 
     const dataIds = useMemo<UniqueIdentifier[]>(
-        () => initialData?.map(({ hash }) => id) || [],
+        () => initialData?.map(({ hash }) => hash) || [],
         [initialData]
     );
 
@@ -364,6 +364,7 @@ const DataTableFilters = observer((
     const activeCount = columnFilters.length;
 
     const handleApply = () => {
+        console.log("APPLY draft", draft);
         onColumnFiltersChange(draft);
         setOpen(false);
     };

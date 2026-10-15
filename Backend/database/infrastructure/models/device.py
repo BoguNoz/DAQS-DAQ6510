@@ -4,7 +4,7 @@ from database.infrastructure.models.base import Base
 
 
 class DeviceORM(Base):
-    __tablename__ = 'device'
+    __tablename__ = 'devices'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]

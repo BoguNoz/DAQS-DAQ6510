@@ -5,7 +5,7 @@ import asyncio
 
 from adapters.measurement_sink import DatabaseMeasurementSink
 from container import Services
-from database.infrastructure.database.connection import SessionFactory
+from database.infrastructure.database.session import SessionFactory
 from database.infrastructure.database.dev_seed import seed_dev_data
 from database.infrastructure.database.init import init_database
 from database.service.database_service import DatabaseService

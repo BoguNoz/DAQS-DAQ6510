@@ -13,9 +13,11 @@ import {en} from "@/text/en.ts";
 import DeviceCell from "@/components/layout/data-table/DeviceCell.tsx";
 import type {LogoKey} from "@/models/device/device.ts";
 import DateCell from "@/components/layout/data-table/DateCell.tsx";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import type {DataStoreInterface} from "@/stores/data-store";
 import {toast} from "sonner";
+import { Button } from "@/components/ui/button";
+import {ArrowDown, ArrowUp, ArrowUpDown} from "lucide-react";
 
 
 export interface DataTablePageProps {
@@ -42,6 +44,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
         let cancelled = false;
         setIsLoading(true);
 
+
         const timeoutId = setTimeout(async () => {
             try {
                 const {items, total} = await dataStore.listMeasurements(
@@ -51,9 +54,10 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
                 );
                 if (cancelled) return;
 
+                console.log(items, total)
                 setData(items);
                 setPageCount(Math.ceil(total / pagination.pageSize));
-            } catch {
+            } catch (err) {
                 if (!cancelled) {
                     toast.error(en.toast.loadingError );
                 }
@@ -94,6 +98,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
         columnHelper.accessor((row) => row.time, {
             id: dataTableFields.time,
             header: en.dataTablePage.table.timeColumn,
+            enableSorting: true,
             cell: ({row}) => (
                <DateCell
                    value={row.original.time}
@@ -102,7 +107,26 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
         }),
         columnHelper.accessor((row) => row.device.name, {
             id: dataTableFields.device,
-            header: en.dataTablePage.table.deviceColumn,
+            header: ({ column }) => {
+                const sorted = column.getIsSorted();
+
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={column.getToggleSortingHandler()}
+                    >
+                        Device
+                        {sorted === "asc" ? (
+                            <ArrowUp className="ml-2 h-4 w-4" />
+                        ) : sorted === "desc" ? (
+                            <ArrowDown className="ml-2 h-4 w-4" />
+                        ) : (
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        )}
+                    </Button>
+                );
+            },
+            enableSorting: true,
             cell: ({row}) => (
                 <DeviceCell
                     name={row.original.device.name}

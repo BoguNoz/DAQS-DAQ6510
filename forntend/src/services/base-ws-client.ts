@@ -119,10 +119,12 @@ export class WSClient {
             this.handleMessage(event.data);
         };
 
-        socket.onclose = () => {
+        socket.onclose = (event) => {
             if (this.socket !== socket) return;
             this.socket = null;
-            this.failAllPending();
+            this.failAllPending(
+                `WebSocket closed (code=${event.code}, reason=${event.reason || "none"})`
+            );
             this.lifecycle.onClose?.();
             this.scheduleReconnect();
         };
@@ -146,7 +148,11 @@ export class WSClient {
             if (response.ok) {
                 request.resolve(response.payload);
             } else {
-                request.reject(new Error());
+                const msg =
+                    (response.payload as any)?.message ??
+                    (response.payload as any)?.error ??
+                    "Request failed";
+                request.reject(new Error(String(msg)));
             }
             return;
         }
@@ -164,10 +170,10 @@ export class WSClient {
         }, delay);
     }
 
-    private failAllPending(): void {
+    private failAllPending(reason = "WebSocket closed"): void {
         this.pending.forEach((request) => {
             clearTimeout(request.timer);
-            request.reject(new Error());
+            request.reject(new Error(reason));
         });
         this.pending.clear();
     }

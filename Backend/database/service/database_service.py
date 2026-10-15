@@ -73,28 +73,43 @@ class DatabaseService:
             page_index: int,
             page_size: int,
     ) -> tuple[list[Measurement], int]:
-
         page_index = max(0, page_index)
         page_size = min(max(1, page_size), 50)
-        decoded_filters = self._decode_filters(filters)
 
         with self._session_factory() as session:
-            orms, total = MeasurementRepository(session).get_all(decoded_filters, page_index, page_size)
+            resolved = self._resolve_filters(session, filters)
+
+            orms, total = MeasurementRepository(session).get_all(
+                resolved, page_index, page_size
+            )
 
             device_ids = {orm.device_id for orm in orms}
-            devices = DeviceRepository(session).get_all_by_id(device_ids)
+            device_list = DeviceRepository(session).get_all_by_id(device_ids)
+            devices = {d.id: d for d in device_list}
 
-            result = [self._measurement_to_model(orm, devices[orm.device_id]) for orm in orms]
-
+            result = [
+                self._measurement_to_model(orm, devices[orm.device_id])
+                for orm in orms
+            ]
         return result, total
 
-    def _decode_filters(self, filters: list[dict]) -> list[dict]:
-        decoded = []
+    def _resolve_filters(self, session: Session, filters: list[dict]) -> list[dict]:
+        resolved = []
+        device_repo = DeviceRepository(session)
+
         for f in filters:
-            if f.get("id") == "device" and f.get("value"):
-                f = {**f, "value": self._hasher.decode(f["value"])}  # NOWY słownik, oryginał nietknięty
-            decoded.append(f)
-        return decoded
+            if f.get("id") == "device" and isinstance(f.get("value"), str) and f["value"].strip():
+                needle = f["value"].strip().lower()
+                matching_ids = [
+                    d.id
+                    for d in device_repo.get_all()
+                    if needle in (d.name or "").lower()
+                ]
+                resolved.append({"id": "device_ids", "value": matching_ids})
+            else:
+                resolved.append(f)
+
+        return resolved
 
     def _device_to_model(self, orm: DeviceORM) -> Device:
         return Device(

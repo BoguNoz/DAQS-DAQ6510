@@ -85,20 +85,17 @@ class DataStore implements DataStoreInterface {
     _setExperimentStatus = (status: ExperimentStatus) => {
         const previous = this._experimentStatus;
         this._experimentStatus = status;
-        console.warn("pooling: ", status);
 
         const isNewRun =
             (previous?.state === "IDLE" || previous?.state === "DONE") &&
             status.state === "MEASURING_TEMPERATURE";
         if (isNewRun) {
-            console.warn("is new")
             this._t1Series = [];
             this._t2Series = [];
             this._voltageSeries = [];
         }
 
         if (status.state === "MEASURING_TEMPERATURE") {
-            console.warn("MEASURING_TEMPERATURE")
             if (status.thermocouple_1_temperature !== null) {
                 this._t1Series = [...this._t1Series, status.thermocouple_1_temperature];
 

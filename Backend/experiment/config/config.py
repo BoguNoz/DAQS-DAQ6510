@@ -2,9 +2,16 @@
 import json
 from pathlib import Path
 from dataclasses import dataclass
+import sys
+from pathlib import Path
 
-CONFIG_PATH = Path(__file__).parent / "channel_config.json"
-CONNECTION_CONFIG_PATH = Path(__file__).parent / "connection_config.json"
+def resource_path(*parts: str) -> Path:
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return Path(sys._MEIPASS, *parts)
+    return Path(__file__).resolve().parent.parent.joinpath(*parts)
+
+CONFIG_PATH = resource_path("experiment", "config", "channel_config.json")
+CONNECTION_CONFIG_PATH = resource_path("experiment", "config", "connection_config.json")
 
 @dataclass(frozen=True)
 class ChannelRole:
@@ -24,18 +31,26 @@ def load_channel_map() -> dict[str, ChannelRole]:
     }
 
 def save_channel_map(raw_config: dict) -> None:
-    # TODO: walidacja przed zapisem — sprawdź, że są dokładnie 3 wymagane klucze,
-    # że slot/channel to sensowne liczby całkowite (patrz sekcja niżej)
+    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     with open(CONFIG_PATH, "w") as f:
-        json.dump(raw_config, f, indent=2)
+        try:
+            json.dump(raw_config, f, indent=2)
+        except Exception as e:
+            print(e)
 
 def load_connection_config() -> dict:
     with open(CONNECTION_CONFIG_PATH) as f:
         return json.load(f)
 
 def save_connection_config(config: dict) -> None:
+    CONNECTION_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     with open(CONNECTION_CONFIG_PATH, "w") as f:
-        json.dump(config, f, indent=2)
+        try:
+            json.dump(config, f, indent=2)
+        except Exception as e:
+            print(e)
 
 KALMAN_PROCESS_VARIANCE = 1e-5   # TODO: skalibruj na realnych/symulowanych danych
 KALMAN_MEASUREMENT_VARIANCE = 1e-2  # TODO: skalibruj na realnych/symulowanych danych

@@ -9,7 +9,7 @@ from facade.websocket.router import Router
 
 class WebSocketServer:
     def __init__(self, router: Router, registry: ConnectionRegistry,
-                 host: str = "localhost", port: int = 12345) -> None:
+                 host: str = "0.0.0.0", port: int = 12345) -> None:
         self._router = router
         self._registry = registry
         self._host = host

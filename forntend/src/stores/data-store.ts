@@ -85,17 +85,20 @@ class DataStore implements DataStoreInterface {
     _setExperimentStatus = (status: ExperimentStatus) => {
         const previous = this._experimentStatus;
         this._experimentStatus = status;
+        console.warn("pooling: ", status);
 
         const isNewRun =
             (previous?.state === "IDLE" || previous?.state === "DONE") &&
             status.state === "MEASURING_TEMPERATURE";
         if (isNewRun) {
+            console.warn("is new")
             this._t1Series = [];
             this._t2Series = [];
             this._voltageSeries = [];
         }
 
         if (status.state === "MEASURING_TEMPERATURE") {
+            console.warn("MEASURING_TEMPERATURE")
             if (status.thermocouple_1_temperature !== null) {
                 this._t1Series = [...this._t1Series, status.thermocouple_1_temperature];
 
@@ -106,6 +109,7 @@ class DataStore implements DataStoreInterface {
             }
 
         } else if (status.state === "MEASURING_VOLTAGE" && status.voltage !== null) {
+            console.warn("MEASURING_VOLTAGE")
             this._voltageSeries = [...this._voltageSeries, status.voltage];
         }
     };
@@ -166,8 +170,6 @@ class DataStore implements DataStoreInterface {
 
         const tick = async () => {
             if (stopped) return;
-
-
             try {
                 const connected = await experimentService.getDeviceStatus();
                 if (!stopped) this._setStatus(connected);

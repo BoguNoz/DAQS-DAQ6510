@@ -1,7 +1,6 @@
 import {observer} from "mobx-react-lite";
 import DashboardPage from "@/components/pages/DashboardPage.tsx";
 import type {DataStoreInterface} from "@/stores/data-store.ts";
-import {useCallback} from "react";
 
 
 interface DashboardPageContainerProps {
@@ -29,7 +28,7 @@ const DashboardPageContainer = observer((props: DashboardPageContainerProps) => 
             }}
             voltage={{
                 value: status?.voltage ?? null,
-                isStable: voltageStable,
+                isStable: true,
                 data: dataStore.getVoltageSeries(),
             }}
         />

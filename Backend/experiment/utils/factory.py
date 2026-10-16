@@ -25,7 +25,10 @@ def build_orchestrator(sink: MeasurementSink) -> Orchestrator:
         device_hash = connection_config["device_hash"]
 
     connection = VisaConnection(resource_address, resource_manager)
-    connection.open()
+    try:
+        connection.open()
+    except Exception as e:
+        print(e)
 
     daq = DAQ6510(connection)
     return Orchestrator(daq, channel_map, device_hash,

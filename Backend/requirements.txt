@@ -1,0 +1,15 @@
+pytest~=8.4.2
+PyVISA~=1.14.1
+websockets~=15.0.1
+sqids~=0.5.2
+sqlalchemy~=2.0.54
+python-dotenv~=1.2.1
+numpy>=2.2.0
+pip~=23.2.1
+wheel~=0.41.2
+pyyaml~=6.0.3
+stringparser~=0.7
+setuptools~=68.2.0
+mysql-connector-python>=8.0.0
+pyvisa-sim>=0.5.1
+pyvisa-py>=0.5.3

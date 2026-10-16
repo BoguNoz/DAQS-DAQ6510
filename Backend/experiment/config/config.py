@@ -16,7 +16,10 @@ def load_channel_map() -> dict[str, ChannelRole]:
         raw = json.load(f)
 
     return {
-        name: ChannelRole(name, address=f"{data['slot']}{data['channel']:02d}")
+        name: ChannelRole(
+            name=name,
+            address=f"{int(data['slot'])}{int(data['channel']):02d}"
+        )
         for name, data in raw.items()
     }
 

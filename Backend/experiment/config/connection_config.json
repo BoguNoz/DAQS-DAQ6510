@@ -1,5 +1,5 @@
 {
-    "use_simulator": true,
-    "resource_address": "",
-    "device_hash": ""
+  "use_simulator": false,
+  "device_hash": "UkLWZg9DAJQ7XlrzYPhmvbTL",
+  "resource_address": "TCPIP0::192.168.1.10::inst0::INSTR"
 }

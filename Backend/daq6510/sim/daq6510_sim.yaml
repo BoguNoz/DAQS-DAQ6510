@@ -9,6 +9,16 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "KEITHLEY INSTRUMENTS,MODEL DAQ6510,12345678,1.0.0"
+      - q: "*RST"
+      - q: "INIT"
+      - q: 'SENS:FUNC "TEMP", (@101)'
+      - q: "SENS:TEMP:TC:TYPE K, (@101)"
+      - q: 'SENS:FUNC "TEMP", (@102)'
+      - q: "SENS:TEMP:TC:TYPE K, (@102)"
+      - q: 'SENS:FUNC "VOLT", (@201)'
+      - q: "ROUT:SCAN:CRE (@101,102,201)"
+      - q: 'TRAC:DATA? 1, 3, "defbuffer1", CHAN, READ'
+        r: "101,35.0,102,25.0,201,0.0018"
 
 resources:
   USB::0x05E6::0x6510::12345678::INSTR:

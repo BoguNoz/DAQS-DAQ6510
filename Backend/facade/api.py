@@ -29,4 +29,5 @@ def build_websocket_api(services: Services, host: str = "localhost", port: int =
     registry = ConnectionRegistry()
     server = WebSocketServer(router, registry, host, port)
     broadcaster = StateBroadcaster(services.experiment, registry)
+
     return WebSocketApi(server, broadcaster)

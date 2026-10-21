@@ -33,19 +33,6 @@ def build_frontend_app() -> web.Application:
     app.router.add_static("/", str(dist_dir), show_index=True)
     return app
 
-async def start_frontend_http() -> None:
-    app = build_frontend_app()
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", 8080)
-    await site.start()
-
-    try:
-        await asyncio.Event().wait()
-    finally:
-        await runner.cleanup()
-
-
 def get_sim_path(relative_path: str) -> str:
     # Obsługuje zarówno tryb deweloperski, jak i spakowany .exe/.app
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -75,16 +62,10 @@ async def main() -> None:
 
     api = build_websocket_api(services, host="0.0.0.0", port=12345)
 
-    frontend_task = asyncio.create_task(start_frontend_http())
-
     try:
         await api.run()
     finally:
-        frontend_task.cancel()
-        try:
-            await frontend_task
-        except asyncio.CancelledError:
-            pass
+        pass
 
 
 if __name__ == "__main__":

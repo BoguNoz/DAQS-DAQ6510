@@ -8,7 +8,7 @@ from pathlib import Path
 def resource_path(*parts: str) -> Path:
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(sys._MEIPASS, *parts)
-    return Path(__file__).resolve().parent.parent.joinpath(*parts)
+    return Path(__file__).resolve().parents[2].joinpath(*parts)
 
 CONFIG_PATH = resource_path("experiment", "config", "channel_config.json")
 CONNECTION_CONFIG_PATH = resource_path("experiment", "config", "connection_config.json")

@@ -1,11 +1,13 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 
-load_dotenv()
+env_path = Path(__file__).resolve().parents[3] / ".env"
+load_dotenv(env_path)
 
 DATABASE_URL = URL.create(
     "mysql+mysqlconnector",

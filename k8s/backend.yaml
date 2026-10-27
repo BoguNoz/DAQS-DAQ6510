@@ -16,7 +16,7 @@ spec:
       containers:
         - name: backend
           image: ghcr.io/bogunoz/daqs-backend:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 12345
           env:

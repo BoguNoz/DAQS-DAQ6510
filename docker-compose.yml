@@ -1,12 +1,15 @@
 services:
   mysql:
     image: mysql:8.4
+    container_name: daqs-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
-      MYSQL_DATABASE: ${DB_NAME:?Set DB_NAME in .env}
-      MYSQL_USER: ${DB_USER:?Set DB_USER in .env}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:${DB_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -14,9 +17,11 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+      start_period: 30s
 
   backend:
     build: ./Backend
+    container_name: daqs-backend
     restart: unless-stopped
     depends_on:
       mysql:
@@ -24,19 +29,11 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: ${DB_NAME:?Set DB_NAME in .env}
-      DB_USER: ${DB_USER:?Set DB_USER in .env}
-      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
-    volumes:
-      - ./Backend/experiment/config:/app/experiment/config
-
-  frontend:
-    build: ./frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "8080:80"
+      - "12345:12345"
 
 volumes:
   mysql_data:

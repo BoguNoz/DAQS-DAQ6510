@@ -16,9 +16,14 @@ spec:
       containers:
         - name: backend
           image: ghcr.io/bogunoz/daqs-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 12345
+          readinessProbe:
+            tcpSocket:
+              port: 12345
+            initialDelaySeconds: 5
+            periodSeconds: 5
           env:
             - name: DB_HOST
               value: mysql
@@ -28,17 +33,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: daqs-db-secret
-                  key: MYSQL_DATABASE
+                  key: DB_NAME
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: daqs-db-secret
-                  key: MYSQL_USER
+                  key: DB_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: daqs-db-secret
-                  key: MYSQL_PASSWORD
+                  key: DB_PASSWORD
 ---
 apiVersion: v1
 kind: Service

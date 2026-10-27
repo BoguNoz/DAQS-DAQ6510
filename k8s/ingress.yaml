@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: daqs.local
+  - host: daqs.test
     http:
       paths:
       - path: /ws

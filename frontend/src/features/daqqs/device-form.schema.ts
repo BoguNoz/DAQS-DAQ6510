@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const formFields = {
+export const deviceFormFields = {
     name: "name",
     logo: "logo",
     resourceAddress: "resourceAddress",
@@ -12,7 +12,7 @@ export const formFields = {
     voltage_channel: "voltage_channel",
 }
 
-export const formSchema = z.object({
+export const deviceFormSchema = z.object({
     name: z.string().min(5, "Name must be at least 5 characters.").max(32),
     logo: z.string(),
     resourceAddress: z.string().min(1, "Resource address is required."),
@@ -25,4 +25,4 @@ export const formSchema = z.object({
 
 });
 
-export type FormSchema = z.infer<typeof formSchema>;
+export type FormSchema = z.infer<typeof deviceFormSchema>;

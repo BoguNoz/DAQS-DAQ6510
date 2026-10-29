@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import Sidebar from "@/components/layout/sidebar/Sidebar.tsx";
 import type {Device} from "@/models/device/device.ts";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useCallback, useEffect} from "react";
 import {roots} from "@/roots/root.tsx";
 import type {DataStoreInterface} from "@/stores/data-store.ts";
@@ -16,6 +16,7 @@ interface SidebarContainerProps {
 
 const SidebarContainer = observer((props: SidebarContainerProps) => {
     const { dataStore } = props;
+    const location = useLocation();
 
     const navigate = useNavigate();
 
@@ -51,8 +52,20 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
 
     const handleNavigateToDataTable = useCallback(() => navigate(`/${roots.dataTable}`),[navigate]);
 
+    const handleNavigateToFittingsSettings = useCallback(() => navigate(`/${roots.fittingsSettings}`),[navigate]);
+
+    const handleNavigateToFittingsDashboard = useCallback(() => navigate(`/${roots.fittingsDashboard}`),[navigate]);
+
+
     const handleOnStart = useCallback(async () => await dataStore.startExperiment(), [dataStore]);
+
     const handleOnStop = useCallback(async () => await dataStore.stopExperiment(), [dataStore])
+
+
+    const showDQQSControlPanel = useCallback(() => {
+        const path = location.pathname;
+        return path.includes(`/${roots.dashboard}`) || path.includes(`/${roots.dataTable}`);
+    }, [location.pathname]);
 
     return (
         <Sidebar
@@ -62,9 +75,12 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
             handleNavigateToDevice={handleNavigateToDevice}
             handleNavigateToDashboard={handleNavigateToDashboard}
             handleNavigateToDataTable={handleNavigateToDataTable}
+            handleNavigateToFittingsSettings={handleNavigateToFittingsSettings}
+            handleNavigateToFittingsDashboard={handleNavigateToFittingsDashboard}
             getDeviceConnectionStatus={dataStore.getStatus}
             handleOnStart={handleOnStart}
             handleOnStop={handleOnStop}
+            showDQQSControlPanel={showDQQSControlPanel}
         />
     );
 });

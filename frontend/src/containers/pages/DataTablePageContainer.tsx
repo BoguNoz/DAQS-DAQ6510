@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import DataTablePage from "@/components/pages/DataTablePage.tsx";
 import {z} from "zod"
-import {dataTableFields, type dataTableSchema, features} from "@/features/data-table.schema.ts";
+import {dataTableColumns, type dataTableSchema, dataTableFeatures} from "@/features/daqqs/data-table.schema.ts";
 import {
     type ColumnFiltersState,
     type ColumnVisibilityState,
@@ -79,7 +79,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
 
 
     const columnHelper = createColumnHelper<
-        typeof features,
+        typeof dataTableFeatures,
         z.infer<typeof dataTableSchema>
     >()
 
@@ -95,7 +95,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
             ),
         }),*/
         columnHelper.accessor((row) => row.time, {
-            id: dataTableFields.time,
+            id: dataTableColumns.time,
             header: en.dataTablePage.table.timeColumn,
             enableSorting: true,
             cell: ({row}) => (
@@ -105,7 +105,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
             ),
         }),
         columnHelper.accessor((row) => row.device.name, {
-            id: dataTableFields.device,
+            id: dataTableColumns.device,
             header: ({ column }) => {
                 const sorted = column.getIsSorted();
 
@@ -134,7 +134,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
             ),
         }),
         columnHelper.accessor((row) => row.t1, {
-            id: dataTableFields.t1,
+            id: dataTableColumns.t1,
             header: () => (
                 <div className="text-left">{en.dataTablePage.table.thermocouple_1Column}</div>
             ),
@@ -143,7 +143,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
             ),
         }),
         columnHelper.accessor((row) => row.t2, {
-            id: dataTableFields.t2,
+            id: dataTableColumns.t2,
             header: () => (
                 <div className="text-left">{en.dataTablePage.table.thermocouple_2Column}</div>
             ),
@@ -152,7 +152,7 @@ const DataTablePageContainer = observer((props: DataTablePageProps) => {
             ),
         }),
         columnHelper.accessor((row) => row.voltage, {
-            id: dataTableFields.voltage,
+            id: dataTableColumns.voltage,
             header: () => (
                 <div className="text-left">{en.dataTablePage.table.voltageColumn}</div>
             ),

@@ -9,7 +9,7 @@ import {Controller, type UseFormReturn, useFormState} from "react-hook-form";
 import * as z from "zod";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import {formPrefix} from "@/containers/pages/constants";
-import {formFields, type formSchema} from "@/features/device-form.schema.ts";
+import {deviceFormFields, type deviceFormSchema} from "@/features/daqqs/device-form.schema.ts";
 import {Separator} from "@/components/ui/separator.tsx";
 import {ButtonGroup} from "@/components/ui/button-group.tsx";
 import {Button} from "@/components/ui/button.tsx";
@@ -18,8 +18,8 @@ import {Button} from "@/components/ui/button.tsx";
 
 interface DeviceSettingsPageProps {
     form: UseFormReturn<any, any, any>
-    onSubmit: (data: z.infer<typeof formSchema>) => Promise<void>
-    onUpdate: (data: z.infer<typeof formSchema>) => Promise<void>
+    onSubmit: (data: z.infer<typeof deviceFormSchema>) => Promise<void>
+    onUpdate: (data: z.infer<typeof deviceFormSchema>) => Promise<void>
     handleEditability: (variant?: "inspect" | "edit" | "add") => boolean;
     handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
     handleDelete: () => void
@@ -68,7 +68,7 @@ const DeviceSettingsPage = observer((props: DeviceSettingsPageProps) => {
 
 const ContextButtons = observer((
     props: {
-        onUpdate: (data: z.infer<typeof formSchema>) => Promise<void>
+        onUpdate: (data: z.infer<typeof deviceFormSchema>) => Promise<void>
         variant?: "inspect" | "edit" | "add"
         handleNavigateToDevice: (variant: ("inspect" | "edit" | "add")) => void
         handleDelete: () => void
@@ -172,7 +172,7 @@ const DeviceMapping = observer((
                     </FieldLabel>
                     <Separator orientation="vertical" />
                     <Controller
-                        name={formFields.logo}
+                        name={deviceFormFields.logo}
                         control={form.control}
                         render={({ field, fieldState }) => (
                             <div className="flex flex-col gap-1">
@@ -208,7 +208,7 @@ const DeviceMapping = observer((
                     />
 
                     <Controller
-                        name={formFields.name}
+                        name={deviceFormFields.name}
                         control={form.control}
                         render={({ field, fieldState }) => (
                             <div className="flex flex-col gap-1 flex-1">
@@ -228,7 +228,7 @@ const DeviceMapping = observer((
                 </div>
 
                 <Controller
-                    name={formFields.resourceAddress}
+                    name={deviceFormFields.resourceAddress}
                     control={form.control}
                     render={({ field, fieldState }) => (
                         <div className="flex gap-2 w-full">
@@ -282,22 +282,22 @@ const ChannelMapping = observer((
                 <SlotChannelRaw
                     form={form}
                     label={en.devicePage.thermocouple_1}
-                    slotName={formFields.thermocouple_1_slot}
-                    channelName={formFields.thermocouple_1_channel}
+                    slotName={deviceFormFields.thermocouple_1_slot}
+                    channelName={deviceFormFields.thermocouple_1_channel}
                     disabled={disabled}
                 />
                 <SlotChannelRaw
                     form={form}
                     label={en.devicePage.thermocouple_2}
-                    slotName={formFields.thermocouple_2_slot}
-                    channelName={formFields.thermocouple_2_channel}
+                    slotName={deviceFormFields.thermocouple_2_slot}
+                    channelName={deviceFormFields.thermocouple_2_channel}
                     disabled={disabled}
                 />
                 <SlotChannelRaw
                     form={form}
                     label={en.devicePage.voltage}
-                    slotName={formFields.voltage_slot}
-                    channelName={formFields.voltage_channel}
+                    slotName={deviceFormFields.voltage_slot}
+                    channelName={deviceFormFields.voltage_channel}
                     disabled={disabled}
                 />
 

@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import DataTablePage from "@/components/pages/DataTablePage.tsx";
 import {z} from "zod"
-import {dataTableFields, type dataTableSchema, features} from "@/features/data-table.schema.ts";
+import {dataTableFields, type dataTableSchema, features} from "@/features/daqqs/data-table.schema.ts";
 import {
     type ColumnFiltersState,
     type ColumnVisibilityState,

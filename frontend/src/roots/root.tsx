@@ -5,11 +5,13 @@ import DeviceSettingsPageContainer from "@/containers/pages/DeviceSettingsPageCo
 import DataTablePageContainer from "@/containers/pages/DataTablePageContainer.tsx";
 import DashboardPageContainer from "@/containers/pages/DashboardPageContainer.tsx";
 import {dataStore} from "@/stores/data-store.ts";
+import FittingsSettingsPageContainer from "@/containers/pages/FittingsSettingsPageContainer.tsx";
 
 export const roots = {
     dashboard: "dashboard",
     device: "device",
     dataTable: "data",
+    fittingsSettings: "fittings-settings",
 }
 
 export const router = createBrowserRouter([
@@ -43,6 +45,11 @@ export const router = createBrowserRouter([
                 element: <DataTablePageContainer dataStore={dataStore} />,
                 handle: {crumb: () => en.crumbs.dataTablePage},
             },
+            {
+                path: `${roots.fittingsSettings}`,
+                element: <FittingsSettingsPageContainer/>,
+                handle: {crumb: () => en.crumbs.fittingsSettings},
+            }
         ],
     },
 ]);

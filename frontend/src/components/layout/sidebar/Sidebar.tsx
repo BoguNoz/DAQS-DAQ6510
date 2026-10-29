@@ -23,14 +23,20 @@ interface SidebarProps {
     handleNavigateToDevice: (variant: "inspect" | "edit" | "add", hash?: string) => void
     handleNavigateToDashboard: () => void;
     handleNavigateToDataTable: () => void;
+    handleNavigateToFittingsSettings: () => void;
+
     getDeviceConnectionStatus: () => boolean | null;
 
     handleOnStart: () => Promise<void>
     handleOnStop: () => Promise<void>
+
+    showDQQSControlPanel: () => boolean
 }
 
 const Sidebar = observer((props: SidebarProps) => {
-    const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus, handleNavigateToDashboard, handleNavigateToDataTable, setSelectedDevice, handleOnStart, handleOnStop } = props
+    const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus,
+        handleNavigateToDashboard, handleNavigateToDataTable, handleNavigateToFittingsSettings,
+        setSelectedDevice, handleOnStart, handleOnStop, showDQQSControlPanel } = props
 
     return (
         <SidebarProvider>
@@ -42,11 +48,13 @@ const Sidebar = observer((props: SidebarProps) => {
                 handleNavigateToDevice={handleNavigateToDevice}
                 handleNavigateToDashboard={handleNavigateToDashboard}
                 handleNavigateToDataTable={handleNavigateToDataTable}
+                handleNavigateToFittingsSettings={handleNavigateToFittingsSettings}
                 getDeviceConnectionStatus={getDeviceConnectionStatus}
             />
             <Inset
                 handleOnStop={handleOnStop}
                 handleOnStart={handleOnStart}
+                showDQQSControlPanel={showDQQSControlPanel}
             />
         </SidebarProvider>
     )
@@ -56,9 +64,10 @@ const Inset = observer((
     props: {
         handleOnStart: () => Promise<void>
         handleOnStop: () => Promise<void>
+        showDQQSControlPanel: () => boolean
     }
 ) => {
-    const {handleOnStart, handleOnStop} = props;
+    const {handleOnStart, handleOnStop, showDQQSControlPanel} = props;
     const matches = useMatches()
 
     const crumbs = matches
@@ -89,12 +98,15 @@ const Inset = observer((
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
-                <div className="ml-auto px-4">
-                    <ControlPanel
-                        handleOnStart={handleOnStart}
-                        handleOnStop={handleOnStop}
-                    />
-                </div>
+
+                {showDQQSControlPanel() && (
+                    <div className="ml-auto px-4">
+                        <ControlPanel
+                            handleOnStart={handleOnStart}
+                            handleOnStop={handleOnStop}
+                        />
+                    </div>
+                )}
             </header>
             <Separator orientation="horizontal"/>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

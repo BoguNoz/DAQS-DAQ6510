@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {dataTableFields, dataTableSchema, features} from "@/features/data-table.schema.ts";
+import {dataTableFields, dataTableSchema, features} from "@/features/daqqs/data-table.schema.ts";
 import {z} from "zod";
 import {
     type ColumnFilter,

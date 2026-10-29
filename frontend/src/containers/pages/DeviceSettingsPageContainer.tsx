@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "sonner";
 import {useCallback, useEffect} from "react";
-import { formSchema } from "@/features/device-form.schema";
+import { deviceFormSchema } from "@/features/daqqs/device-form.schema.ts";
 import DeviceSettingsPage from "@/components/pages/DeviceSettingsPage.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {roots} from "@/roots/root.tsx";
@@ -27,8 +27,8 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
 
     const validVariant = (["inspect", "edit", "add"].includes(variant!) ? variant : "inspect") as "inspect" | "edit" | "add";
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof deviceFormSchema>>({
+        resolver: zodResolver(deviceFormSchema),
         defaultValues: {
             name: "",
             logo: "cpu",
@@ -81,7 +81,7 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
 
     }, [dataStore, deviceId, validVariant, form]);
 
-    const onSubmit = useCallback(async (data: z.infer<typeof formSchema>) => {
+    const onSubmit = useCallback(async (data: z.infer<typeof deviceFormSchema>) => {
         const device: Device = {
             hash: "",
             name: data.name,
@@ -102,7 +102,7 @@ const DeviceSettingsPageContainer = observer((props: DeviceSettingsPageContainer
 
     }, [dataStore, deviceId]);
 
-    const onUpdate = useCallback(async (data: z.infer<typeof formSchema>) => {
+    const onUpdate = useCallback(async (data: z.infer<typeof deviceFormSchema>) => {
         const device: Device = {
             hash: deviceId || "",
             name: data.name,

@@ -24,6 +24,7 @@ interface SidebarProps {
     handleNavigateToDashboard: () => void;
     handleNavigateToDataTable: () => void;
     handleNavigateToFittingsSettings: () => void;
+    handleNavigateToFittingsDashboard: () => void;
 
     getDeviceConnectionStatus: () => boolean | null;
 
@@ -36,7 +37,8 @@ interface SidebarProps {
 const Sidebar = observer((props: SidebarProps) => {
     const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus,
         handleNavigateToDashboard, handleNavigateToDataTable, handleNavigateToFittingsSettings,
-        setSelectedDevice, handleOnStart, handleOnStop, showDQQSControlPanel } = props
+        handleNavigateToFittingsDashboard, setSelectedDevice, handleOnStart, handleOnStop,
+        showDQQSControlPanel } = props
 
     return (
         <SidebarProvider>
@@ -49,6 +51,7 @@ const Sidebar = observer((props: SidebarProps) => {
                 handleNavigateToDashboard={handleNavigateToDashboard}
                 handleNavigateToDataTable={handleNavigateToDataTable}
                 handleNavigateToFittingsSettings={handleNavigateToFittingsSettings}
+                handleNavigateToFittingsDashboard={handleNavigateToFittingsDashboard}
                 getDeviceConnectionStatus={getDeviceConnectionStatus}
             />
             <Inset

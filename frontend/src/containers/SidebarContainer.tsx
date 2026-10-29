@@ -54,6 +54,8 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
 
     const handleNavigateToFittingsSettings = useCallback(() => navigate(`/${roots.fittingsSettings}`),[navigate]);
 
+    const handleNavigateToFittingsDashboard = useCallback(() => navigate(`/${roots.fittingsDashboard}`),[navigate]);
+
 
     const handleOnStart = useCallback(async () => await dataStore.startExperiment(), [dataStore]);
 
@@ -74,6 +76,7 @@ const SidebarContainer = observer((props: SidebarContainerProps) => {
             handleNavigateToDashboard={handleNavigateToDashboard}
             handleNavigateToDataTable={handleNavigateToDataTable}
             handleNavigateToFittingsSettings={handleNavigateToFittingsSettings}
+            handleNavigateToFittingsDashboard={handleNavigateToFittingsDashboard}
             getDeviceConnectionStatus={dataStore.getStatus}
             handleOnStart={handleOnStart}
             handleOnStop={handleOnStop}

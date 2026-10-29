@@ -5,6 +5,7 @@ export const en = {
         settingsPage: "Settings",
         dataTablePage: "Experiment Data",
         fittingsSettings: "Fittings Experiment Settings",
+        fittingsDashboard: "Fittings Dashboard",
     },
     deviceSwitcher: {
         menuContentLabel: "Devices",
@@ -135,6 +136,19 @@ export const en = {
             anisotropy: 1.94,
             q: 1.0,
             c2: 1.3e-6,
+        }
+    },
+    fittingsDashboardPage: {
+        table: {
+            timeColumn: "Time",
+            anisotropyRatio: "Anisotropy Ratio",
+            k2: "Thermal Conductivity",
+            r32: "Thermal Boundary Resistance",
+            k3: "Substrate Thermal Conductivity",
+            kParallel: "Calculated In-plane Conductivity",
+            r2Amp: "Amplitude Fit Goodness (R²)",
+            r2Phase: "Phase Fit Goodness (R²)",
+            resNorm: "Residual Norm",
         }
     }
 };

@@ -69,7 +69,7 @@ const PTRForwardModels = observer((props: {
                 <Controller
                     name={fittingsFormFields.dataFile}
                     control={form.control}
-                    render={({ field, fieldState }) => (
+                    render={({ field: { value, onChange, ...field }, fieldState }) => (
                         <div className="flex gap-2 w-full">
                             <FieldLabel className="text-xs font-medium text-nowrap">
                                 {en.fittingsSettingsPage.dataFile}
@@ -77,17 +77,17 @@ const PTRForwardModels = observer((props: {
                             <Separator orientation="vertical" />
                             <div className="flex flex-col gap-1 flex-1">
                                 <Input
-                                    type={"file"}
-                                    {...field}
+                                    type="file"
+                                    {...field} // zawiera ref, name, onBlur (bez value)
+                                    onChange={(e) => onChange(e.target.files)} // przekazujemy pliki do react-hook-form
                                     aria-invalid={fieldState.invalid}
                                 />
                                 {fieldState.error && (
                                     <span className="text-xs text-destructive">
-                                        {fieldState.error.message}
-                                     </span>
+                        {fieldState.error.message}
+                     </span>
                                 )}
                             </div>
-
                         </div>
                     )}
                 />

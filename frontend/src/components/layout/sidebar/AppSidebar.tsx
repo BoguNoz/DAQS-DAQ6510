@@ -24,6 +24,7 @@ interface AppSidebarProps extends ComponentProps<typeof Sidebar> {
     handleNavigateToDashboard: () => void;
     handleNavigateToDataTable: () => void;
     handleNavigateToFittingsSettings: () => void;
+    handleNavigateToFittingsDashboard: () => void;
     getDeviceConnectionStatus: () => boolean | null;
 }
 
@@ -35,7 +36,7 @@ function IconInnerShadowTop(props: { className: string }) {
 const AppSidebar = observer((props: AppSidebarProps) => {
     const { getDevices, deleteDevice, handleNavigateToDevice, getDeviceConnectionStatus,
         handleNavigateToDashboard, handleNavigateToDataTable, handleNavigateToFittingsSettings,
-        setSelectedDevice, ...sidebarProps } = props
+        handleNavigateToFittingsDashboard, setSelectedDevice, ...sidebarProps } = props
 
     return (
         <Sidebar collapsible="offcanvas" {...sidebarProps}>
@@ -69,7 +70,7 @@ const AppSidebar = observer((props: AppSidebarProps) => {
                             <Settings/>
                             <span>{en.sidebarTabs.fittingsSettings}</span>
                         </SidebarMenuButton>
-                        <SidebarMenuButton >
+                        <SidebarMenuButton onClick={handleNavigateToFittingsDashboard}>
                             <SquareActivity/>
                             <span>{en.sidebarTabs.fittings}</span>
                         </SidebarMenuButton>

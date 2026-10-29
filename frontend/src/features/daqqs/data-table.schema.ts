@@ -7,7 +7,7 @@ import {
     tableFeatures
 } from "@tanstack/react-table";
 
-export const features = tableFeatures({
+export const dataTableFeatures = tableFeatures({
     columnFilteringFeature,
     columnVisibilityFeature,
     rowPaginationFeature,
@@ -19,8 +19,8 @@ export const features = tableFeatures({
     coreRowModel: createCoreRowModel(),
 });
 
-export const dataTableFields = {
-    user: "user",
+export const dataTableColumns = {
+    //user: "user",
     time: "time",
     device: "device",
     t1: "t1",

@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {dataTableFields, dataTableSchema, features} from "@/features/daqqs/data-table.schema.ts";
+import {dataTableColumns, dataTableSchema, dataTableFeatures} from "@/features/daqqs/data-table.schema.ts";
 import {z} from "zod";
 import {
     type ColumnFilter,
@@ -30,6 +30,7 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.t
 import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
 import { format } from "date-fns"
 import {Calendar} from "@/components/ui/calendar.tsx";
+import DataTableFooter from "@/components/layout/data-table/DataTableFooter.tsx";
 
 export interface RangeValue {
     min?: number;
@@ -90,7 +91,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
     );
 
     const table = useTable({
-        features,
+        features: dataTableFeatures,
         data: initialData,
         columns,
         manualPagination: true,
@@ -122,7 +123,7 @@ const DataTablePage = observer((props: DataTablePageProps) => {
                 />
             </div>
             <div className="overflow-hidden rounded-lg border">
-                <Table className="table-fixed w-full">
+                <Table className="table-fixed w-full min-w-[750px]">
                     <TableHeader className="sticky top-0 z-10 bg-muted">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -172,92 +173,12 @@ const DataTablePage = observer((props: DataTablePageProps) => {
     );
 });
 
-const DataTableFooter = observer((
-    props: {
-        table: any;
-    }
-) => {
-    const {table} = props;
 
-    return (
-        <div className="flex items-center justify-between px-4 pt-6">
-            <div className="hidden flex-1 text-sm font-light text-muted-foreground lg:flex">
-                {table.getFilteredSelectedRowModel().rows.length} {en.dataTablePage.footer.pageOf}{" "}
-                {table.getFilteredRowModel().rows.length} {en.dataTablePage.footer.rowSelected}.
-            </div>
-            <div className="flex w-full items-center gap-8 lg:w-fit">
-                <div className="hidden items-center gap-2 lg:flex">
-                    <Label htmlFor="rows-per-page" className="text-sm font-light">
-                        {en.dataTablePage.footer.rowsPerPage}
-                    </Label>
-                    <Select
-                        value={`${table.state.pagination.pageSize}`}
-                        onValueChange={(value) => {
-                            table.setPageSize(Number(value))
-                        }}
-                    >
-                        <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                            <SelectValue placeholder={table.state.pagination.pageSize} />
-                        </SelectTrigger>
-                        <SelectContent side="top">
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <SelectItem key={pageSize} value={`${pageSize}`}>
-                                    {pageSize}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex w-fit items-center justify-center text-sm font-medium">
-                    Page {table.state.pagination.pageIndex + 1} of{" "}
-                    {table.getPageCount()}
-                </div>
-                <div className="ml-auto flex items-center gap-2 lg:ml-0">
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <ChevronsLeft />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="size-8"
-                        size="icon"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <ChevronLeft />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="size-8"
-                        size="icon"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <ChevronRight />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="hidden size-8 lg:flex"
-                        size="icon"
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <ChevronsRight />
-                    </Button>
-                </div>
-            </div>
-        </div>
-    );
-});
 
 
 const DataTableRow = observer((
     props: {
-        row:  Row<typeof features, z.infer<typeof dataTableSchema>>
+        row:  Row<typeof dataTableFeatures, z.infer<typeof dataTableSchema>>
     }
 ) => {
     const {row} = props;
@@ -355,11 +276,11 @@ const DataTableFilters = observer((
     const [draft, setDraft] = useState<ColumnFiltersState>(columnFilters);
     const [open, setOpen] = useState(false);
 
-    const timeRange = getFilterValue<DateRangeValue>(draft, dataTableFields.time) ?? {};
-    const device = getFilterValue<string>(draft, dataTableFields.device) ?? "";
-    const t1Range = getFilterValue<RangeValue>(draft, dataTableFields.t1) ?? {};
-    const t2Range = getFilterValue<RangeValue>(draft, dataTableFields.t2) ?? {};
-    const voltageRange = getFilterValue<RangeValue>(draft, dataTableFields.voltage) ?? {};
+    const timeRange = getFilterValue<DateRangeValue>(draft, dataTableColumns.time) ?? {};
+    const device = getFilterValue<string>(draft, dataTableColumns.device) ?? "";
+    const t1Range = getFilterValue<RangeValue>(draft, dataTableColumns.t1) ?? {};
+    const t2Range = getFilterValue<RangeValue>(draft, dataTableColumns.t2) ?? {};
+    const voltageRange = getFilterValue<RangeValue>(draft, dataTableColumns.voltage) ?? {};
 
     const activeCount = columnFilters.length;
 
@@ -422,7 +343,7 @@ const DataTableFilters = observer((
                         placeholder={en.dataTablePage.filtering.devicePlaceholder}
                         value={device ?? ""}
                         onChange={(e) =>
-                            setDraft(setFilterValue(draft, dataTableFields.device, e.target.value))
+                            setDraft(setFilterValue(draft, dataTableColumns.device, e.target.value))
                         }
                     />
                 </div>
@@ -432,7 +353,7 @@ const DataTableFilters = observer((
                     label={en.dataTablePage.table.thermocouple_1Column}
                     value={t1Range}
                     onChange={(next) =>
-                        setDraft(setFilterValue(draft, dataTableFields.t1, next))
+                        setDraft(setFilterValue(draft, dataTableColumns.t1, next))
                     }
                 />
 
@@ -441,7 +362,7 @@ const DataTableFilters = observer((
                     label={en.dataTablePage.table.thermocouple_2Column}
                     value={t2Range}
                     onChange={(next) =>
-                        setDraft(setFilterValue(draft, dataTableFields.t2, next))
+                        setDraft(setFilterValue(draft, dataTableColumns.t2, next))
                     }
                 />
 
@@ -450,7 +371,7 @@ const DataTableFilters = observer((
                     label={en.dataTablePage.table.voltageColumn}
                     value={voltageRange}
                     onChange={(next) =>
-                        setDraft(setFilterValue(draft, dataTableFields.voltage, next))
+                        setDraft(setFilterValue(draft, dataTableColumns.voltage, next))
                     }
                 />
 
@@ -517,7 +438,7 @@ const DataPicker = observer((
 
     const [open, setOpen] = useState(false);
 
-    const timeRange = getFilterValue<DateRangeValue>(draft, dataTableFields.time) ?? {};
+    const timeRange = getFilterValue<DateRangeValue>(draft, dataTableColumns.time) ?? {};
     const currentIso = timeRange[field];
     const date = currentIso ? new Date(currentIso) : undefined;
 
@@ -553,7 +474,7 @@ const DataPicker = observer((
                                 }
 
                                 onDraftChange(
-                                    setFilterValue(draft, dataTableFields.time, {
+                                    setFilterValue(draft, dataTableColumns.time, {
                                         ...timeRange,
                                         [field]: combined.toISOString(),
                                     })
@@ -579,7 +500,7 @@ const DataPicker = observer((
                         combined.setHours(hours ?? 0, minutes ?? 0, seconds ?? 0, 0);
 
                         onDraftChange(
-                            setFilterValue(draft, dataTableFields.time, {
+                            setFilterValue(draft, dataTableColumns.time, {
                                 ...timeRange,
                                 [field]: combined.toISOString(),
                             })

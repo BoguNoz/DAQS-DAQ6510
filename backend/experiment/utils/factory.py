@@ -1,12 +1,12 @@
 from pathlib import Path
 import pyvisa
 
-from backend.daq6510.instrument import DAQ6510
-from backend.daq6510.transport.visa_connection import VisaConnection
-from backend.experiment.config.config import load_channel_map, load_connection_config, KALMAN_PROCESS_VARIANCE, \
+from daq6510.instrument import DAQ6510
+from daq6510.transport.visa_connection import VisaConnection
+from experiment.config.config import load_channel_map, load_connection_config, KALMAN_PROCESS_VARIANCE, \
     KALMAN_MEASUREMENT_VARIANCE
-from backend.experiment.core.orchestrator import Orchestrator
-from backend.experiment.core.ports import MeasurementSink
+from experiment.core.orchestrator import Orchestrator
+from experiment.core.ports import MeasurementSink
 
 
 def build_orchestrator(sink: MeasurementSink) -> Orchestrator:

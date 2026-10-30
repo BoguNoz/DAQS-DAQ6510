@@ -4,9 +4,9 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func, select
 
-from backend.database.infrastructure.database.connection import SessionFactory
-from backend.database.infrastructure.models.device import DeviceORM
-from backend.database.infrastructure.models.measurement import MeasurementORM
+from database.infrastructure.database.connection import SessionFactory
+from database.infrastructure.models.device import DeviceORM
+from database.infrastructure.models.measurement import MeasurementORM
 
 POINTS_PER_DEVICE = 300
 STEP = timedelta(minutes=5)

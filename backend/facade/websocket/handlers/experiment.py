@@ -1,8 +1,8 @@
 import asyncio
 
-from backend.experiment.service.experiment_service import ExperimentService
-from backend.facade.websocket.router import Router
-from backend.facade.websocket.utils.handlers_actions import ExperimentActions
+from experiment.service.experiment_service import ExperimentService
+from facade.websocket.router import Router
+from facade.websocket.utils.handlers_actions import ExperimentActions
 
 
 class ExperimentHandlers:

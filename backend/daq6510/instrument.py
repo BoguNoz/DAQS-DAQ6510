@@ -1,6 +1,6 @@
-from backend.daq6510.scpi.commands import ScpiCommands
-from backend.daq6510.scpi.parser import parse_idn, parse_channel_readings
-from backend.daq6510.transport.visa_connection import VisaConnection
+from daq6510.scpi.commands import ScpiCommands
+from daq6510.scpi.parser import parse_idn, parse_channel_readings
+from daq6510.transport.visa_connection import VisaConnection
 
 
 class DAQ6510:

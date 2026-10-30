@@ -1,11 +1,11 @@
 import threading
 from typing import Callable
 
-from backend.daq6510.transport.exceptions import InstrumentError
-from backend.experiment.core.orchestrator import Orchestrator
-from backend.experiment.core.state import SharedExperimentData
-from backend.experiment.service.exceptions import InstrumentUnavailableError, InvalidConfigError
-from backend.experiment.service.ports import ConfigStore
+from daq6510.transport.exceptions import InstrumentError
+from experiment.core.orchestrator import Orchestrator
+from experiment.core.state import SharedExperimentData
+from experiment.service.exceptions import InstrumentUnavailableError, InvalidConfigError
+from experiment.service.ports import ConfigStore
 
 
 class ExperimentService:

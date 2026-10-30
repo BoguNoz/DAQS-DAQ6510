@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func, and_, false
 
-from backend.database.infrastructure.models.measurement import MeasurementORM
+from database.infrastructure.models.measurement import MeasurementORM
 
 
 class MeasurementRepository:

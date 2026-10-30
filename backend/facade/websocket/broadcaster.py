@@ -1,9 +1,9 @@
 import asyncio
 
-from backend.experiment.service.experiment_service import ExperimentService
-from backend.facade.websocket.connections import ConnectionRegistry
-from backend.facade.websocket.protocol import Event
-from backend.facade.websocket.utils.handlers_actions import ExperimentActions
+from experiment.service.experiment_service import ExperimentService
+from facade.websocket.connections import ConnectionRegistry
+from facade.websocket.protocol import Event
+from facade.websocket.utils.handlers_actions import ExperimentActions
 
 
 class StateBroadcaster:

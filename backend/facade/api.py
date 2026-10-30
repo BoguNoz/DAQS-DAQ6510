@@ -1,12 +1,12 @@
 import asyncio
 
-from backend.container import Services
-from backend.facade.websocket.broadcaster import StateBroadcaster
-from backend.facade.websocket.connections import ConnectionRegistry
-from backend.facade.websocket.handlers.database import DatabaseHandlers
-from backend.facade.websocket.handlers.experiment import ExperimentHandlers
-from backend.facade.websocket.router import Router
-from backend.facade.websocket.server import WebSocketServer
+from container import Services
+from facade.websocket.broadcaster import StateBroadcaster
+from facade.websocket.connections import ConnectionRegistry
+from facade.websocket.handlers.database import DatabaseHandlers
+from facade.websocket.handlers.experiment import ExperimentHandlers
+from facade.websocket.router import Router
+from facade.websocket.server import WebSocketServer
 
 
 class WebSocketApi:

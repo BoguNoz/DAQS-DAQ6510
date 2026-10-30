@@ -3,13 +3,13 @@ from typing import List
 
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.database.domain.models.device import Device
-from backend.database.domain.models.measurement import DeviceL, Measurement
-from backend.database.infrastructure.models.device import DeviceORM
-from backend.database.infrastructure.models.measurement import MeasurementORM
-from backend.database.infrastructure.repositories.device_repository import DeviceRepository
-from backend.database.infrastructure.repositories.measurement_repository import MeasurementRepository
-from backend.database.utils.hasher import Hasher
+from database.domain.models.device import Device
+from database.domain.models.measurement import DeviceL, Measurement
+from database.infrastructure.models.device import DeviceORM
+from database.infrastructure.models.measurement import MeasurementORM
+from database.infrastructure.repositories.device_repository import DeviceRepository
+from database.infrastructure.repositories.measurement_repository import MeasurementRepository
+from database.utils.hasher import Hasher
 
 
 class DatabaseService:

@@ -1,7 +1,7 @@
 import pyvisa
 from pyvisa.constants import StatusCode
 
-from backend.daq6510.transport.exceptions import InstrumentTimeoutError, InstrumentDisconnectedError, \
+from daq6510.transport.exceptions import InstrumentTimeoutError, InstrumentDisconnectedError, \
     InstrumentNotFoundError, InstrumentError, InstrumentWriteError
 
 

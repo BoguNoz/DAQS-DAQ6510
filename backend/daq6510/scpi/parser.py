@@ -1,4 +1,4 @@
-from backend.daq6510.scpi.exceptions import IdnFormatResponseError, ChannelReadingsError
+from daq6510.scpi.exceptions import IdnFormatResponseError, ChannelReadingsError
 
 
 def parse_idn(raw_response: str) -> dict:

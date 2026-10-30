@@ -2,14 +2,14 @@ import threading
 import time
 from datetime import datetime, timezone
 
-from backend.daq6510.instrument import DAQ6510
-from backend.daq6510.transport.exceptions import InstrumentError
-from backend.experiment.config.config import ChannelRole
-from backend.experiment.core.ports import MeasurementSink, MeasurementRecord
-from backend.experiment.core.state import SharedExperimentData, ExperimentState
-from backend.experiment.methods.kalman import ScalarKalmanFilter
-from backend.experiment.methods.seebeck import calculate_seebeck_coefficient
-from backend.experiment.methods.stability import StabilityDetector
+from daq6510.instrument import DAQ6510
+from daq6510.transport.exceptions import InstrumentError
+from experiment.config.config import ChannelRole
+from experiment.core.ports import MeasurementSink, MeasurementRecord
+from experiment.core.state import SharedExperimentData, ExperimentState
+from experiment.methods.kalman import ScalarKalmanFilter
+from experiment.methods.seebeck import calculate_seebeck_coefficient
+from experiment.methods.stability import StabilityDetector
 
 
 class Orchestrator:

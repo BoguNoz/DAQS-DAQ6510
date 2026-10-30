@@ -1,6 +1,6 @@
 from typing import Literal
 
-from backend.daq6510.scpi.exceptions import TcTypeValueError
+from daq6510.scpi.exceptions import TcTypeValueError
 
 
 class ScpiCommands:

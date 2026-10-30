@@ -4,8 +4,8 @@ from sqlalchemy import ForeignKey
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.database.infrastructure.models.base import Base
-from backend.database.infrastructure.models.types import UTCDateTime
+from database.infrastructure.models.base import Base
+from database.infrastructure.models.types import UTCDateTime
 
 
 class MeasurementORM(Base):

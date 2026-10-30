@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select, Sequence
 
-from backend.database.infrastructure.models.device import DeviceORM
+from database.infrastructure.models.device import DeviceORM
 
 
 class DeviceRepository:

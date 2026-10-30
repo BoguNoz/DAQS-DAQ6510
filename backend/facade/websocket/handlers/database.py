@@ -1,12 +1,12 @@
 import asyncio
 from dataclasses import asdict
 
-from backend.database.domain.models.device import Device
-from backend.database.domain.models.measurement import Measurement
-from backend.database.service.database_service import DatabaseService
-from backend.facade.websocket.protocol import ProtocolError
-from backend.facade.websocket.router import Router
-from backend.facade.websocket.utils.handlers_actions import DatabaseActions
+from database.domain.models.device import Device
+from database.domain.models.measurement import Measurement
+from database.service.database_service import DatabaseService
+from facade.websocket.protocol import ProtocolError
+from facade.websocket.router import Router
+from facade.websocket.utils.handlers_actions import DatabaseActions
 
 
 class DatabaseHandlers:

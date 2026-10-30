@@ -3,8 +3,8 @@ import asyncio
 import websockets
 from websockets import ConnectionClosed
 
-from backend.facade.websocket.connections import ConnectionRegistry
-from backend.facade.websocket.router import Router
+from facade.websocket.connections import ConnectionRegistry
+from facade.websocket.router import Router
 
 
 class WebSocketServer:

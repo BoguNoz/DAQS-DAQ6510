@@ -96,11 +96,10 @@ In a second terminal, start the frontend:
 ```bash
 cd frontend
 npm ci
-echo "VITE_WS_URL=ws://127.0.0.1:12345" > .env.local
 npm run dev
 ```
 
-Open `http://localhost:5173`. If the UI does not connect, check the WebSocket connection in the browser developer tools.
+Open `http://localhost:5173`. The Vite development server proxies `/ws` to the backend on port `12345`. If the UI does not connect, check the WebSocket connection in the browser developer tools.
 
 To stop the services, run `docker compose down`. This keeps the MySQL volume; add `--volumes` to remove the data as well.
 
@@ -135,7 +134,7 @@ In hardware mode, the backend host must be able to reach the DAQ6510, and the ch
 
 ### Frontend
 
-By default the frontend connects to the `/ws` endpoint of the host that served the page. Set `VITE_WS_URL` to override this; see [`frontend/.env.example`](frontend/.env.example).
+By default the frontend connects to the `/ws` endpoint of the host that served the page. In development, Vite proxies this WebSocket endpoint to the backend on `127.0.0.1:12345`. Set `VITE_WS_URL` to override the URL; see [`frontend/.env.example`](frontend/.env.example).
 
 ## WebSocket API
 

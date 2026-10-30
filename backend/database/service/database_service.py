@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session, sessionmaker
 
 from backend.database.domain.models.device import Device
-from backend.database.domain.models.measurement import Measurement
+from backend.database.domain.models.measurement import DeviceL, Measurement
 from backend.database.infrastructure.models.device import DeviceORM
 from backend.database.infrastructure.models.measurement import MeasurementORM
 from backend.database.infrastructure.repositories.device_repository import DeviceRepository
@@ -156,6 +156,5 @@ class DatabaseService:
             t2=orm.t2,
             voltage=orm.voltage,
         )
-
 
 

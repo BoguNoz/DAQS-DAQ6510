@@ -1,6 +1,5 @@
 import asyncio
 from dataclasses import asdict
-from typing import List
 
 from backend.database.domain.models.device import Device
 from backend.database.domain.models.measurement import Measurement

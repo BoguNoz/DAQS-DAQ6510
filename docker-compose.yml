@@ -20,7 +20,7 @@ services:
       start_period: 30s
 
   backend:
-    build: ./Backend
+    build: backend
     container_name: daqs-backend
     restart: unless-stopped
     depends_on:

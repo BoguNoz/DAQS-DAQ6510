@@ -122,9 +122,9 @@ Set these variables in the root `.env` file, which Compose loads automatically.
 
 | File | Purpose |
 | --- | --- |
-| [`Backend/experiment/config/connection_config.json`](Backend/experiment/config/connection_config.json) | Connection mode and VISA address |
-| [`Backend/experiment/config/channel_config.json`](Backend/experiment/config/channel_config.json) | Mapping of measurement roles to slots and channels |
-| [`Backend/daq6510/sim/daq6510_sim.yaml`](Backend/daq6510/sim/daq6510_sim.yaml) | Simulator definition |
+| [`Backend/experiment/config/connection_config.json`](backend/experiment/config/connection_config.json) | Connection mode and VISA address |
+| [`Backend/experiment/config/channel_config.json`](backend/experiment/config/channel_config.json) | Mapping of measurement roles to slots and channels |
+| [`Backend/daq6510/sim/daq6510_sim.yaml`](backend/daq6510/sim/daq6510_sim.yaml) | Simulator definition |
 
 The `use_simulator` field selects the connection mode:
 
@@ -161,7 +161,7 @@ npm run lint     # ESLint
 npm run build    # type check and production build in frontend/dist
 ```
 
-Backend dependencies are listed in [`Backend/requirements.txt`](Backend/requirements.txt). The container image uses Python 3.12 and starts the application with `python app.py`. For full-stack development, run MySQL and the backend with Docker Compose and start the frontend as shown above.
+Backend dependencies are listed in [`Backend/requirements.txt`](backend/requirements.txt). The container image uses Python 3.12 and starts the application with `python app.py`. For full-stack development, run MySQL and the backend with Docker Compose and start the frontend as shown above.
 
 ### Repository structure
 

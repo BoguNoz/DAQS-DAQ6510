@@ -1,10 +1,10 @@
 frontend/node_modules/
 frontend/dist/
-Backend/static/
-Backend/data/
-Backend/.venv/
+backend/static/
+backend/data/
+backend/.venv/
 __pycache__/
 *.py[cod]
 .idea/
 k8s/secret.yaml
-.env
+backend/.env
